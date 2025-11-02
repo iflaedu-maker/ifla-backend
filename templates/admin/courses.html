@@ -1,0 +1,959 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Course Management - Admin - IFLA</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Roboto', sans-serif;
+            background: #121212;
+            color: #fff;
+            overflow-x: hidden;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            position: fixed;
+            left: 0;
+            top: 0;
+            width: 260px;
+            height: 100vh;
+            background: #1E1E1E;
+            z-index: 1000;
+            padding: 20px 0;
+            overflow-y: auto;
+            transition: transform 0.3s ease;
+        }
+
+        .sidebar-header {
+            padding: 0 20px 30px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            margin-bottom: 20px;
+        }
+
+        .sidebar-header .logo {
+            font-size: 24px;
+            font-weight: 700;
+            color: #fff;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .menu-item {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            padding: 14px 20px;
+            color: rgba(255, 255, 255, 0.7);
+            text-decoration: none;
+            transition: all 0.2s;
+            border-left: 3px solid transparent;
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .menu-item:hover {
+            background: rgba(255, 255, 255, 0.05);
+            color: #fff;
+        }
+
+        .menu-item.active {
+            background: rgba(33, 150, 243, 0.1);
+            color: #2196F3;
+            border-left-color: #2196F3;
+        }
+
+        .menu-item svg {
+            width: 20px;
+            height: 20px;
+        }
+
+        /* Header */
+        .header {
+            position: fixed;
+            top: 0;
+            left: 260px;
+            right: 0;
+            height: 70px;
+            background: #1E1E1E;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            align-items: center;
+            padding: 0 30px;
+            z-index: 999;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .menu-toggle {
+            background: none;
+            border: none;
+            color: #fff;
+            cursor: pointer;
+            padding: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .menu-toggle svg {
+            width: 24px;
+            height: 24px;
+        }
+
+        .header-right {
+            margin-left: auto;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .logout-btn {
+            padding: 8px 16px;
+            background: rgba(244, 67, 54, 0.2);
+            color: #F44336;
+            border: 1px solid rgba(244, 67, 54, 0.4);
+            border-radius: 8px;
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.2s;
+        }
+
+        .logout-btn:hover {
+            background: rgba(244, 67, 54, 0.4);
+            color: #fff;
+        }
+
+        .header-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.05);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: background 0.2s;
+            position: relative;
+        }
+
+        .header-icon:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .header-icon svg {
+            width: 20px;
+            height: 20px;
+            color: #fff;
+        }
+
+        .notification-badge {
+            position: absolute;
+            top: 6px;
+            right: 6px;
+            width: 8px;
+            height: 8px;
+            background: #F44336;
+            border-radius: 50%;
+            border: 2px solid #1E1E1E;
+        }
+
+        /* Main Content */
+        .main-content {
+            margin-left: 260px;
+            margin-top: 70px;
+            padding: 30px;
+            min-height: calc(100vh - 70px);
+        }
+
+        .page-title {
+            font-size: 28px;
+            font-weight: 500;
+            margin-bottom: 30px;
+            color: #fff;
+        }
+        
+        .content-card {
+            background: #1E1E1E;
+            border-radius: 12px;
+            padding: 24px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            margin-bottom: 30px;
+        }
+        
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+        }
+        
+        .section-header h2 {
+            font-size: 24px;
+            font-weight: 700;
+            color: #fff;
+        }
+        
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+        }
+
+        .section-header h2 {
+            font-size: 24px;
+            font-weight: 500;
+            color: #fff;
+        }
+        
+        .btn-primary {
+            padding: 12px 24px;
+            background: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            font-family: 'Roboto', sans-serif;
+            transition: all 0.3s;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .btn-primary:hover {
+            background: #45a049;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(76, 175, 80, 0.3);
+        }
+        
+        .btn-secondary {
+            padding: 8px 16px;
+            background: rgba(33, 150, 243, 0.2);
+            color: #2196F3;
+            border: 1px solid rgba(33, 150, 243, 0.4);
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 500;
+            font-family: 'Roboto', sans-serif;
+            transition: all 0.3s;
+        }
+        
+        .btn-secondary:hover {
+            background: rgba(33, 150, 243, 0.4);
+        }
+        
+        .btn-danger {
+            padding: 8px 16px;
+            background: rgba(244, 67, 54, 0.2);
+            color: #F44336;
+            border: 1px solid rgba(244, 67, 54, 0.4);
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 500;
+            font-family: 'Roboto', sans-serif;
+            transition: all 0.3s;
+        }
+        
+        .btn-danger:hover {
+            background: rgba(244, 67, 54, 0.4);
+            color: #fff;
+        }
+        
+        .language-card-admin {
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 12px;
+            padding: 24px;
+            margin-bottom: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.3s;
+        }
+        
+        .language-card-admin:hover {
+            background: rgba(255, 255, 255, 0.05);
+            border-color: rgba(33, 150, 243, 0.3);
+        }
+        
+        .language-header-admin {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        
+        .language-info-admin {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .language-flag-admin {
+            font-size: 32px;
+        }
+        
+        .language-name-admin {
+            font-size: 20px;
+            font-weight: 600;
+            color: #fff;
+        }
+        
+        .language-category-admin {
+            padding: 4px 12px;
+            background: rgba(33, 150, 243, 0.2);
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: 600;
+            color: #64B5F6;
+            text-transform: uppercase;
+        }
+        
+        .language-actions {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .levels-section {
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .levels-section h3 {
+            font-size: 16px;
+            font-weight: 500;
+            color: rgba(255, 255, 255, 0.9);
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .levels-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 15px;
+        }
+        
+        .level-card {
+            background: rgba(255, 255, 255, 0.02);
+            border-radius: 12px;
+            padding: 18px;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            transition: all 0.3s;
+        }
+        
+        .level-card:hover {
+            background: rgba(255, 255, 255, 0.04);
+            border-color: rgba(33, 150, 243, 0.3);
+        }
+        
+        .level-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+        
+        .level-name {
+            font-weight: 600;
+            color: #fff;
+            font-size: 15px;
+        }
+        
+        .level-price {
+            font-weight: 700;
+            color: #4CAF50;
+            font-size: 18px;
+        }
+        
+        .level-details {
+            font-size: 13px;
+            color: rgba(255, 255, 255, 0.6);
+            margin-bottom: 12px;
+        }
+        
+        .level-actions {
+            display: flex;
+            gap: 8px;
+        }
+        
+        .modal {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.8);
+            z-index: 9999;
+            align-items: center;
+            justify-content: center;
+            backdrop-filter: blur(10px);
+        }
+        
+        .modal.active {
+            display: flex;
+        }
+        
+        .modal-content {
+            background: #1E1E1E;
+            border-radius: 12px;
+            padding: 40px;
+            max-width: 600px;
+            width: 90%;
+            max-height: 90vh;
+            overflow-y: auto;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+        
+        .modal-header h2 {
+            font-size: 24px;
+            font-weight: 500;
+            color: #fff;
+        }
+        
+        .modal-close {
+            background: none;
+            border: none;
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 32px;
+            cursor: pointer;
+            line-height: 1;
+            transition: color 0.3s;
+        }
+        
+        .modal-close:hover {
+            color: #fff;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 14px;
+            font-weight: 500;
+        }
+        
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 12px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            color: #fff;
+            font-family: 'Roboto', sans-serif;
+            font-size: 14px;
+        }
+        
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #2196F3;
+            background: rgba(255, 255, 255, 0.08);
+        }
+        
+        .form-group textarea {
+            min-height: 100px;
+            resize: vertical;
+        }
+        
+        .form-actions {
+            display: flex;
+            gap: 15px;
+            justify-content: flex-end;
+            margin-top: 30px;
+        }
+        
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: rgba(255, 255, 255, 0.5);
+        }
+        
+        .empty-state-icon {
+            font-size: 64px;
+            margin-bottom: 20px;
+            opacity: 0.6;
+        }
+        
+        .messages {
+            position: fixed;
+            top: 90px;
+            right: 30px;
+            z-index: 1001;
+        }
+        
+        .message {
+            background: #4CAF50;
+            color: white;
+            padding: 15px 20px;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+        }
+        
+        .message.error {
+            background: #F44336;
+        }
+
+        @media (max-width: 768px) {
+            .sidebar {
+                transform: translateX(-100%);
+            }
+
+            .sidebar.open {
+                transform: translateX(0);
+            }
+
+            .header {
+                left: 0;
+                padding: 0 15px;
+            }
+
+            .header-right {
+                gap: 10px;
+            }
+
+            .logout-btn {
+                padding: 8px 12px;
+            }
+
+            .logout-btn span {
+                display: none;
+            }
+
+            .logout-btn svg {
+                width: 18px !important;
+                height: 18px !important;
+            }
+
+            .main-content {
+                margin-left: 0;
+                padding: 20px 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Sidebar -->
+    <div class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <div class="logo">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
+                </svg>
+                IFLA Admin
+            </div>
+        </div>
+        <a href="{% url 'admin-dashboard' %}" class="menu-item">
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/>
+            </svg>
+            <span>Dashboard</span>
+        </a>
+        <a href="{% url 'admin-applications' %}" class="menu-item">
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+            </svg>
+            <span>Applications</span>
+        </a>
+        <a href="{% url 'admin-enrollments' %}" class="menu-item">
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/>
+            </svg>
+            <span>Enrollments</span>
+        </a>
+        <a href="{% url 'admin-users' %}" class="menu-item">
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"/>
+            </svg>
+            <span>Users</span>
+        </a>
+        <a href="{% url 'admin-certificates' %}" class="menu-item">
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z"/>
+            </svg>
+            <span>Certificates</span>
+        </a>
+        <a href="{% url 'admin-courses' %}" class="menu-item active">
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/>
+            </svg>
+            <span>Courses</span>
+        </a>
+        <a href="/admin/" class="menu-item">
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/>
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+            </svg>
+            <span>Django Admin</span>
+        </a>
+        </div>
+
+    <!-- Header -->
+    <div class="header">
+        <div class="header-left">
+            <button class="menu-toggle" id="menuToggle">
+                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
+                </svg>
+            </button>
+        </div>
+        <div class="header-right">
+            <a href="#" class="header-icon" title="Mail">
+                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
+                </svg>
+            </a>
+            <a href="{% url 'logout_redirect' %}" class="logout-btn" title="Logout">
+                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" style="width: 18px; height: 18px;">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/>
+                </svg>
+                <span>Logout</span>
+            </a>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <h1 class="page-title">Course Management</h1>
+
+        <div class="content-card">
+            <div class="section-header">
+                <h2>Languages & Courses</h2>
+                <button class="btn-primary" onclick="openLanguageModal()">
+                    ➕ Add Language
+                </button>
+            </div>
+
+            {% if languages %}
+                {% for language in languages %}
+                <div class="language-card-admin">
+                    <div class="language-header-admin">
+                        <div class="language-info-admin">
+                            <span class="language-flag-admin">{{ language.flag_emoji|default:"🌐" }}</span>
+                            <div>
+                                <div class="language-name-admin">{{ language.name }}</div>
+                                <div style="margin-top: 5px; color: rgba(255,255,255,0.6); font-size: 13px;">
+                                    {{ language.description|truncatewords:20 }}
+                                </div>
+                            </div>
+                            <span class="language-category-admin">Category {{ language.category }}</span>
+                        </div>
+                        <div class="language-actions">
+                            <button class="btn-secondary" onclick="openLanguageModal({{ language.id }})">✏️ Edit</button>
+                            <button class="btn-danger" onclick="deleteLanguage({{ language.id }})">🗑️ Delete</button>
+                        </div>
+                    </div>
+                    
+                    <div class="levels-section">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                            <h3>📚 Course Levels ({{ language.levels.count }})</h3>
+                            <button class="btn-secondary" onclick="openLevelModal({{ language.id }})">➕ Add Level</button>
+                        </div>
+                        
+                        <div class="levels-grid">
+                            {% for level in language.levels.all %}
+                            <div class="level-card">
+                                <div class="level-header">
+                                    <span class="level-name">{{ level.get_level_display }}</span>
+                                    <span class="level-price">₹{{ level.price }}</span>
+                                </div>
+                                <div class="level-details">
+                                    Duration: {{ level.duration_weeks }} weeks
+                                </div>
+                                {% if level.description %}
+                                <div class="level-details" style="margin-bottom: 12px;">
+                                    {{ level.description|truncatewords:15 }}
+                                </div>
+                                {% endif %}
+                                <div class="level-actions">
+                                    <button class="btn-secondary" onclick="openLevelModal({{ language.id }}, {{ level.id }})" style="flex: 1;">Edit</button>
+                                    <button class="btn-danger" onclick="deleteLevel({{ level.id }})" style="flex: 1;">Delete</button>
+                                </div>
+                            </div>
+                            {% empty %}
+                            <div style="grid-column: 1 / -1; text-align: center; padding: 20px; color: rgba(255,255,255,0.4);">
+                                No course levels yet. Add one to get started!
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            {% else %}
+                <div class="empty-state">
+                    <div class="empty-state-icon">📚</div>
+                    <p>No languages added yet. Click "Add Language" to get started!</p>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Language Modal -->
+    <div class="modal" id="languageModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="languageModalTitle">Add Language</h2>
+                <button class="modal-close" onclick="closeLanguageModal()">&times;</button>
+            </div>
+            <form id="languageForm" method="POST">
+                {% csrf_token %}
+                <input type="hidden" name="language_id" id="languageId">
+                <div class="form-group">
+                    <label>Language Name *</label>
+                    <input type="text" name="name" id="languageName" required>
+                </div>
+                <div class="form-group">
+                    <label>Flag Emoji</label>
+                    <input type="text" name="flag_emoji" id="languageFlag" placeholder="🇺🇸">
+                </div>
+                <div class="form-group">
+                    <label>Description *</label>
+                    <textarea name="description" id="languageDescription" required></textarea>
+                </div>
+                <div class="form-group">
+                    <label>Category</label>
+                    <select name="category" id="languageCategory">
+                        <option value="1">Category 1</option>
+                        <option value="2">Category 2</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Image URL</label>
+                    <input type="url" name="image_url" id="languageImageUrl" placeholder="https://...">
+                </div>
+                <div class="form-actions">
+                    <button type="button" class="btn-secondary" onclick="closeLanguageModal()">Cancel</button>
+                    <button type="submit" class="btn-primary">Save Language</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Level Modal -->
+    <div class="modal" id="levelModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="levelModalTitle">Add Course Level</h2>
+                <button class="modal-close" onclick="closeLevelModal()">&times;</button>
+            </div>
+            <form id="levelForm" method="POST">
+                {% csrf_token %}
+                <input type="hidden" name="level_id" id="levelId">
+                <input type="hidden" name="language_id" id="levelLanguageId">
+                <div class="form-group">
+                    <label>Level *</label>
+                    <select name="level" id="levelLevel" required>
+                        <option value="">-- Select Level --</option>
+                        <option value="A1">A1 - Beginner</option>
+                        <option value="A2">A2 - Elementary</option>
+                        <option value="B1">B1 - Intermediate</option>
+                        <option value="B2">B2 - Upper Intermediate</option>
+                        <option value="C1">C1 - Advanced</option>
+                        <option value="C2">C2 - Proficient</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Price (₹) *</label>
+                    <input type="number" name="price" id="levelPrice" step="0.01" min="0" required>
+                </div>
+                <div class="form-group">
+                    <label>Duration (weeks)</label>
+                    <input type="number" name="duration_weeks" id="levelDuration" value="12" min="1">
+                </div>
+                <div class="form-group">
+                    <label>Description</label>
+                    <textarea name="description" id="levelDescription"></textarea>
+                </div>
+                <div class="form-actions">
+                    <button type="button" class="btn-secondary" onclick="closeLevelModal()">Cancel</button>
+                    <button type="submit" class="btn-primary">Save Level</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Messages -->
+    {% if messages %}
+    <div class="messages">
+        {% for message in messages %}
+        <div class="message {% if message.tags == 'error' %}error{% endif %}">
+            {{ message }}
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    <script>
+        // Language Modal
+        function openLanguageModal(languageId = null) {
+            const modal = document.getElementById('languageModal');
+            const form = document.getElementById('languageForm');
+            const title = document.getElementById('languageModalTitle');
+            
+            if (languageId) {
+                // Edit mode - load language data
+                fetch(`{% url "admin-get-language" 999 %}`.replace('999', languageId))
+                    .then(r => r.json())
+                    .then(data => {
+                        document.getElementById('languageId').value = data.id;
+                        document.getElementById('languageName').value = data.name;
+                        document.getElementById('languageFlag').value = data.flag_emoji || '';
+                        document.getElementById('languageDescription').value = data.description || '';
+                        document.getElementById('languageCategory').value = data.category;
+                        document.getElementById('languageImageUrl').value = data.image_url || '';
+                        title.textContent = 'Edit Language';
+                        form.action = '{% url "admin-update-language" 999 %}'.replace('999', languageId);
+                    })
+                    .catch(err => {
+                        alert('Error loading language data');
+                        console.error(err);
+                    });
+            } else {
+                // Add mode
+                form.reset();
+                document.getElementById('languageId').value = '';
+                title.textContent = 'Add Language';
+                form.action = '{% url "admin-add-language" %}';
+            }
+            
+            modal.classList.add('active');
+        }
+
+        function closeLanguageModal() {
+            document.getElementById('languageModal').classList.remove('active');
+        }
+
+        // Level Modal
+        function openLevelModal(languageId, levelId = null) {
+            const modal = document.getElementById('levelModal');
+            const form = document.getElementById('levelForm');
+            const title = document.getElementById('levelModalTitle');
+            
+            document.getElementById('levelLanguageId').value = languageId;
+            
+            if (levelId) {
+                // Edit mode - load level data
+                fetch(`{% url "admin-get-level" 999 %}`.replace('999', levelId))
+                    .then(r => r.json())
+                    .then(data => {
+                        document.getElementById('levelId').value = data.id;
+                        document.getElementById('levelLevel').value = data.level;
+                        document.getElementById('levelPrice').value = data.price;
+                        document.getElementById('levelDuration').value = data.duration_weeks || 12;
+                        document.getElementById('levelDescription').value = data.description || '';
+                        document.getElementById('levelLanguageId').value = data.language;
+                        title.textContent = 'Edit Course Level';
+                        form.action = '{% url "admin-update-level" 999 %}'.replace('999', levelId);
+                    })
+                    .catch(err => {
+                        alert('Error loading level data');
+                        console.error(err);
+                    });
+            } else {
+                // Add mode
+                form.reset();
+                document.getElementById('levelId').value = '';
+                document.getElementById('levelLanguageId').value = languageId;
+                title.textContent = 'Add Course Level';
+                form.action = '{% url "admin-add-level" %}';
+            }
+            
+            modal.classList.add('active');
+        }
+
+        function closeLevelModal() {
+            document.getElementById('levelModal').classList.remove('active');
+        }
+
+        // Delete functions
+        function deleteLanguage(languageId) {
+            if (confirm('Are you sure you want to delete this language? This will also delete all associated course levels.')) {
+                const form = document.createElement('form');
+                form.method = 'POST';
+                form.action = '{% url "admin-delete-language" 999 %}'.replace('999', languageId);
+                const csrf = document.createElement('input');
+                csrf.type = 'hidden';
+                csrf.name = 'csrfmiddlewaretoken';
+                csrf.value = '{{ csrf_token }}';
+                form.appendChild(csrf);
+                document.body.appendChild(form);
+                form.submit();
+            }
+        }
+
+        function deleteLevel(levelId) {
+            if (confirm('Are you sure you want to delete this course level?')) {
+                const form = document.createElement('form');
+                form.method = 'POST';
+                form.action = '{% url "admin-delete-level" 999 %}'.replace('999', levelId);
+                const csrf = document.createElement('input');
+                csrf.type = 'hidden';
+                csrf.name = 'csrfmiddlewaretoken';
+                csrf.value = '{{ csrf_token }}';
+                form.appendChild(csrf);
+                document.body.appendChild(form);
+                form.submit();
+            }
+        }
+
+        // Close modals on outside click
+        document.getElementById('languageModal').addEventListener('click', function(e) {
+            if (e.target === this) closeLanguageModal();
+        });
+
+        document.getElementById('levelModal').addEventListener('click', function(e) {
+            if (e.target === this) closeLevelModal();
+        });
+
+        // Auto-hide messages
+        setTimeout(function() {
+            const messages = document.querySelectorAll('.message');
+            messages.forEach(msg => {
+                msg.style.opacity = '0';
+                msg.style.transition = 'opacity 0.5s';
+                setTimeout(() => msg.remove(), 500);
+            });
+        }, 5000);
+
+        // Mobile menu toggle
+        document.getElementById('menuToggle').addEventListener('click', function() {
+            document.getElementById('sidebar').classList.toggle('open');
+        });
+    </script>
+</body>
+</html>
+

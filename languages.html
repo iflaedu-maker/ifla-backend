@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Languages & Courses - IFLA</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@100;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="languages.css">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-left">
+            <button class="hamburger-menu">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+            <div class="logo">IFLA</div>
+        </div>
+        <div class="nav-center">
+            <div class="nav-links">
+                <a href="index.html" class="nav-link">Home</a>
+                <a href="languages.html" class="nav-link">Courses / Languages</a>
+                <a href="#" class="nav-link">About Us</a>
+                <a href="index.html#contact" class="nav-link">Contact</a>
+            </div>
+        </div>
+        <div class="nav-right">
+            <a href="auth.html" class="nav-btn nav-btn-login">Login</a>
+            <a href="auth.html?action=signup" class="nav-btn nav-btn-signup">Sign Up</a>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="languages-hero">
+        <div class="languages-hero-background"></div>
+        <div class="languages-hero-content">
+            <h1 class="languages-hero-title">
+                <span class="title-line">Explore Our</span>
+                <span class="title-line title-gradient">Language Programs</span>
+            </h1>
+            <p class="languages-hero-subtitle">
+                From beginner to advanced levels, find the perfect course to start your language learning journey
+            </p>
+        </div>
+    </section>
+
+    <!-- Languages Grid Section -->
+    <section class="languages-grid-section">
+        <div class="languages-container">
+            <div class="section-header">
+                <h2 class="section-title">All Languages</h2>
+                <p class="section-subtitle">Select a language to view detailed pricing and course information</p>
+            </div>
+            
+            <!-- Search Bar -->
+            <div class="search-bar-container">
+                <div class="search-bar">
+                    <svg class="search-icon" width="20" height="20" viewBox="0 0 20 20" fill="none">
+                        <path d="M9 17C13.4183 17 17 13.4183 17 9C17 4.58172 13.4183 1 9 1C4.58172 1 1 4.58172 1 9C1 13.4183 4.58172 17 9 17Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        <path d="M19 19L14.65 14.65" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                    <input 
+                        type="text" 
+                        id="languageSearch" 
+                        class="search-input" 
+                        placeholder="Search for a language..."
+                        autocomplete="off"
+                    >
+                    <button class="search-clear" id="clearSearch" style="display: none;">
+                        <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                            <path d="M12 4L4 12M4 4L12 12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                    </button>
+                </div>
+                <div class="search-results-count" id="searchResultsCount"></div>
+            </div>
+            
+            <div class="language-cards">
+                    <!-- Japanese -->
+                    <div class="language-card" data-category="1" data-language="japanese">
+                        <div class="language-card-image">
+                            <img src="https://images.unsplash.com/photo-1528164344705-47542687000d?w=800&h=600&fit=crop" alt="Japanese culture" onerror="this.onerror=null; this.src='LNGS/Japanese.jpg';">
+                            <div class="language-card-overlay"></div>
+                        </div>
+                        <div class="language-card-content">
+                            <div class="language-header">
+                                <span class="language-flag">🇯🇵</span>
+                                <h4 class="language-name">Japanese</h4>
+                            </div>
+                            <p class="language-description">Master the elegant Japanese language and immerse yourself in one of the world's most fascinating cultures.</p>
+                            <div class="language-info">
+                                <span class="info-item">6 Levels</span>
+                                <span class="info-item">₹16K - ₹26K</span>
+                            </div>
+                            <button class="language-btn">View Details</button>
+                        </div>
+                    </div>
+
+                    <!-- Chinese -->
+                    <div class="language-card" data-category="1" data-language="chinese">
+                        <div class="language-card-image">
+                            <img src="https://images.unsplash.com/photo-1547981609-4b6bfe67ca0b?w=800&h=600&fit=crop" alt="Chinese culture" onerror="this.onerror=null; this.src='LNGS/Chinese.jpg';">
+                            <div class="language-card-overlay"></div>
+                        </div>
+                        <div class="language-card-content">
+                            <div class="language-header">
+                                <span class="language-flag">🇨🇳</span>
+                                <h4 class="language-name">Chinese</h4>
+                            </div>
+                            <p class="language-description">Learn Mandarin Chinese and unlock opportunities in the world's most spoken language.</p>
+                            <div class="language-info">
+                                <span class="info-item">6 Levels</span>
+                                <span class="info-item">₹16K - ₹26K</span>
+                            </div>
+                            <button class="language-btn">View Details</button>
+                        </div>
+                    </div>
+
+                    <!-- Hebrew -->
+                    <div class="language-card" data-category="1" data-language="hebrew">
+                        <div class="language-card-image">
+                            <img src="https://images.unsplash.com/photo-1598977123118-4e30ba3c4f5b?w=800&h=600&fit=crop" alt="Hebrew culture" onerror="this.onerror=null; this.src='LNGS/Hebrew.jpg';">
+                            <div class="language-card-overlay"></div>
+                        </div>
+                        <div class="language-card-content">
+                            <div class="language-header">
+                                <span class="language-flag">🇮🇱</span>
+                                <h4 class="language-name">Hebrew</h4>
+                            </div>
+                            <p class="language-description">Discover the ancient Hebrew language and connect with its rich historical and cultural heritage.</p>
+                            <div class="language-info">
+                                <span class="info-item">6 Levels</span>
+                                <span class="info-item">₹16K - ₹26K</span>
+                            </div>
+                            <button class="language-btn">View Details</button>
+                        </div>
+                    </div>
+
+                    <!-- Korean -->
+                    <div class="language-card" data-category="1" data-language="korean">
+                        <div class="language-card-image">
+                            <img src="https://images.unsplash.com/photo-1517154421773-0529f29ea451?w=800&h=600&fit=crop" alt="Korean culture" onerror="this.onerror=null; this.src='LNGS/Korean.jpg';">
+                            <div class="language-card-overlay"></div>
+                        </div>
+                        <div class="language-card-content">
+                            <div class="language-header">
+                                <span class="language-flag">🇰🇷</span>
+                                <h4 class="language-name">Korean</h4>
+                            </div>
+                            <p class="language-description">Explore Korean language and dive into K-culture, K-pop, and modern Korean society.</p>
+                            <div class="language-info">
+                                <span class="info-item">6 Levels</span>
+                                <span class="info-item">₹16K - ₹26K</span>
+                            </div>
+                            <button class="language-btn">View Details</button>
+                        </div>
+                    </div>
+
+                    <!-- Russian -->
+                    <div class="language-card" data-category="1" data-language="russian">
+                        <div class="language-card-image">
+                            <img src="https://images.unsplash.com/photo-1547448415-e9f5b28e570d?w=800&h=600&fit=crop" alt="Russian culture" onerror="this.onerror=null; this.src='LNGS/Russian.jpg';">
+                            <div class="language-card-overlay"></div>
+                        </div>
+                        <div class="language-card-content">
+                            <div class="language-header">
+                                <span class="language-flag">🇷🇺</span>
+                                <h4 class="language-name">Russian</h4>
+                            </div>
+                            <p class="language-description">Master Russian and access the language of Tolstoy, Dostoyevsky, and rich Slavic culture.</p>
+                            <div class="language-info">
+                                <span class="info-item">6 Levels</span>
+                                <span class="info-item">₹16K - ₹26K</span>
+                            </div>
+                            <button class="language-btn">View Details</button>
+                        </div>
+                    </div>
+
+                    <!-- Dutch -->
+                    <div class="language-card" data-category="1" data-language="dutch">
+                        <div class="language-card-image">
+                            <img src="https://images.unsplash.com/photo-1585211969224-3e992986159d?w=800&h=600&fit=crop" alt="Dutch culture" onerror="this.onerror=null; this.src='LNGS/Dutch.jpg';">
+                            <div class="language-card-overlay"></div>
+                        </div>
+                        <div class="language-card-content">
+                            <div class="language-header">
+                                <span class="language-flag">🇳🇱</span>
+                                <h4 class="language-name">Dutch</h4>
+                            </div>
+                            <p class="language-description">Learn Dutch and open doors to opportunities in the Netherlands and Belgium.</p>
+                            <div class="language-info">
+                                <span class="info-item">6 Levels</span>
+                                <span class="info-item">₹16K - ₹26K</span>
+                            </div>
+                            <button class="language-btn">View Details</button>
+                        </div>
+                    </div>
+
+                    <!-- Swedish -->
+                    <div class="language-card" data-category="1" data-language="swedish">
+                        <div class="language-card-image">
+                            <img src="https://images.unsplash.com/photo-1509356843151-3e7d96241e11?w=800&h=600&fit=crop" alt="Swedish culture" onerror="this.onerror=null; this.src='LNGS/Swedish.jpg';">
+                            <div class="language-card-overlay"></div>
+                        </div>
+                        <div class="language-card-content">
+                            <div class="language-header">
+                                <span class="language-flag">🇸🇪</span>
+                                <h4 class="language-name">Swedish</h4>
+                            </div>
+                            <p class="language-description">Embrace Swedish and connect with Scandinavian culture, design, and innovation.</p>
+                            <div class="language-info">
+                                <span class="info-item">6 Levels</span>
+                                <span class="info-item">₹16K - ₹26K</span>
+                            </div>
+                            <button class="language-btn">View Details</button>
+                        </div>
+                    </div>
+
+                    <!-- Arabic -->
+                    <div class="language-card" data-category="2" data-language="arabic">
+                        <div class="language-card-image">
+                            <img src="https://images.unsplash.com/photo-1564769625905-50e93615e769?w=800&h=600&fit=crop" alt="Arabic culture" onerror="this.onerror=null; this.src='LNGS/Arabic.jpg';">
+                            <div class="language-card-overlay"></div>
+                        </div>
+                        <div class="language-card-content">
+                            <div class="language-header">
+                                <span class="language-flag">🇸🇦</span>
+                                <h4 class="language-name">Arabic</h4>
+                            </div>
+                            <p class="language-description">Learn Modern Standard Arabic and explore the rich cultural heritage of the Arab world.</p>
+                            <div class="language-info">
+                                <span class="info-item">6 Levels</span>
+                                <span class="info-item">₹14K - ₹24K</span>
+                            </div>
+                            <button class="language-btn">View Details</button>
+                        </div>
+                    </div>
+
+                    <!-- French -->
+                    <div class="language-card" data-category="2" data-language="french">
+                        <div class="language-card-image">
+                            <img src="https://images.unsplash.com/photo-1502602898657-3e91760cbb34?w=800&h=600&fit=crop" alt="French culture" onerror="this.onerror=null; this.src='LNGS/French.jpg';">
+                            <div class="language-card-overlay"></div>
+                        </div>
+                        <div class="language-card-content">
+                            <div class="language-header">
+                                <span class="language-flag">🇫🇷</span>
+                                <h4 class="language-name">French</h4>
+                            </div>
+                            <p class="language-description">Master the language of love, diplomacy, and one of the world's most beautiful cultures.</p>
+                            <div class="language-info">
+                                <span class="info-item">6 Levels</span>
+                                <span class="info-item">₹14K - ₹24K</span>
+                            </div>
+                            <button class="language-btn">View Details</button>
+                        </div>
+                    </div>
+
+                    <!-- Spanish -->
+                    <div class="language-card" data-category="2" data-language="spanish">
+                        <div class="language-card-image">
+                            <img src="https://images.unsplash.com/photo-1543783207-ec64e4d95325?w=800&h=600&fit=crop" alt="Spanish culture" onerror="this.onerror=null; this.src='LNGS/Spanish.jpg';">
+                            <div class="language-card-overlay"></div>
+                        </div>
+                        <div class="language-card-content">
+                            <div class="language-header">
+                                <span class="language-flag">🇪🇸</span>
+                                <h4 class="language-name">Spanish</h4>
+                            </div>
+                            <p class="language-description">Learn Spanish and connect with over 500 million speakers across the globe.</p>
+                            <div class="language-info">
+                                <span class="info-item">6 Levels</span>
+                                <span class="info-item">₹14K - ₹24K</span>
+                            </div>
+                            <button class="language-btn">View Details</button>
+                        </div>
+                    </div>
+
+                    <!-- Italian -->
+                    <div class="language-card" data-category="2" data-language="italian">
+                        <div class="language-card-image">
+                            <img src="https://images.unsplash.com/photo-1523906834658-6e24ef2386f9?w=800&h=600&fit=crop" alt="Italian culture" onerror="this.onerror=null; this.src='LNGS/Italian.jpg';">
+                            <div class="language-card-overlay"></div>
+                        </div>
+                        <div class="language-card-content">
+                            <div class="language-header">
+                                <span class="language-flag">🇮🇹</span>
+                                <h4 class="language-name">Italian</h4>
+                            </div>
+                            <p class="language-description">Discover Italian, the language of art, music, cuisine, and la dolce vita.</p>
+                            <div class="language-info">
+                                <span class="info-item">6 Levels</span>
+                                <span class="info-item">₹14K - ₹24K</span>
+                            </div>
+                            <button class="language-btn">View Details</button>
+                        </div>
+                    </div>
+
+                    <!-- German -->
+                    <div class="language-card" data-category="2" data-language="german">
+                        <div class="language-card-image">
+                            <img src="https://images.unsplash.com/photo-1467269204594-9661b134dd2b?w=800&h=600&fit=crop" alt="German culture" onerror="this.onerror=null; this.src='LNGS/German.jpg';">
+                            <div class="language-card-overlay"></div>
+                        </div>
+                        <div class="language-card-content">
+                            <div class="language-header">
+                                <span class="language-flag">🇩🇪</span>
+                                <h4 class="language-name">German</h4>
+                            </div>
+                            <p class="language-description">Master German and access opportunities in Europe's largest economy and beyond.</p>
+                            <div class="language-info">
+                                <span class="info-item">6 Levels</span>
+                                <span class="info-item">₹14K - ₹24K</span>
+                            </div>
+                            <button class="language-btn">View Details</button>
+                        </div>
+                    </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Pricing Modal -->
+    <div class="pricing-modal" id="pricingModal">
+        <div class="pricing-modal-overlay"></div>
+        <div class="pricing-modal-content">
+            <button class="modal-close">&times;</button>
+            <div class="modal-header">
+                <span class="modal-flag" id="modalFlag"></span>
+                <h3 class="modal-title" id="modalTitle"></h3>
+            </div>
+            <div class="modal-body">
+                <p class="modal-description" id="modalDescription"></p>
+                <div class="pricing-table">
+                    <h4 class="pricing-table-title">Course Levels & Pricing</h4>
+                    <div class="pricing-levels" id="pricingLevels"></div>
+                </div>
+                <div class="modal-footer">
+                    <p class="pricing-note">* All prices are in INR and subject to applicable taxes</p>
+                    <a href="auth.html?action=signup" class="modal-cta-btn">Enroll Now</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="languages.js"></script>
+</body>
+</html>
+

@@ -1,0 +1,353 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Payment Portal - IFLA</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@100;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+    <style>
+        .payment-container {
+            max-width: 900px;
+            margin: 80px auto 40px;
+            padding: 40px;
+        }
+        
+        .payment-header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+        
+        .payment-title {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #1a1a1a;
+            margin-bottom: 10px;
+        }
+        
+        .payment-subtitle {
+            font-size: 1rem;
+            color: #666;
+        }
+        
+        .payment-summary {
+            background: #fff;
+            padding: 30px;
+            border-radius: 16px;
+            box-shadow: 0 4px 24px rgba(0, 0, 0, 0.1);
+            margin-bottom: 30px;
+        }
+        
+        .summary-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 20px;
+            color: #1a1a1a;
+        }
+        
+        .summary-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 15px 0;
+            border-bottom: 1px solid #f0f0f0;
+        }
+        
+        .summary-item:last-child {
+            border-bottom: none;
+        }
+        
+        .summary-label {
+            font-weight: 500;
+            color: #333;
+        }
+        
+        .summary-value {
+            font-weight: 600;
+            color: #667eea;
+        }
+        
+        .course-list {
+            margin: 20px 0;
+        }
+        
+        .course-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            margin-bottom: 10px;
+        }
+        
+        .total-section {
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 2px solid #667eea;
+        }
+        
+        .total-amount {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #667eea;
+        }
+        
+        .payment-options {
+            background: #fff;
+            padding: 30px;
+            border-radius: 16px;
+            box-shadow: 0 4px 24px rgba(0, 0, 0, 0.1);
+        }
+        
+        .option-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: 20px;
+            color: #1a1a1a;
+        }
+        
+        .payment-methods {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+        
+        .payment-method {
+            padding: 20px;
+            border: 2px solid #e0e0e0;
+            border-radius: 12px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .payment-method:hover {
+            border-color: #667eea;
+            background: #f0f4ff;
+        }
+        
+        .payment-method.selected {
+            border-color: #667eea;
+            background: #f0f4ff;
+        }
+        
+        .method-icon {
+            font-size: 2rem;
+            margin-bottom: 10px;
+        }
+        
+        .method-name {
+            font-weight: 600;
+            color: #333;
+        }
+        
+        .pay-btn {
+            width: 100%;
+            padding: 16px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+        
+        .pay-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(102, 126, 234, 0.4);
+        }
+        
+        .secure-notice {
+            text-align: center;
+            margin-top: 20px;
+            padding: 15px;
+            background: #f0f8f0;
+            border-radius: 8px;
+            color: #4caf50;
+        }
+        
+        .secure-icon {
+            margin-right: 8px;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-left">
+            <button class="hamburger-menu">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+            <div class="logo">IFLA</div>
+        </div>
+        <div class="nav-center">
+            <div class="nav-links">
+                <a href="{% url 'index' %}" class="nav-link">Home</a>
+                <a href="{% url 'languages' %}" class="nav-link">Courses / Languages</a>
+                <a href="#" class="nav-link">About Us</a>
+                <a href="{% url 'index' %}#contact" class="nav-link">Contact</a>
+            </div>
+        </div>
+        <div class="nav-right">
+            <a href="{% url 'dashboard' %}" class="nav-btn nav-btn-login">Dashboard</a>
+            <a href="{% url 'logout_redirect' %}" class="nav-btn nav-btn-signup">Logout</a>
+        </div>
+    </nav>
+
+    <div class="payment-container">
+        <div class="payment-header">
+            <h1 class="payment-title">Complete Your Payment</h1>
+            <p class="payment-subtitle">Review your order and proceed with payment</p>
+        </div>
+
+        <!-- Payment Summary -->
+        <div class="payment-summary">
+            <h2 class="summary-title">Order Summary</h2>
+            
+            <div class="summary-item">
+                <span class="summary-label">Student Name</span>
+                <span class="summary-value">{{ application.full_name }}</span>
+            </div>
+            
+            <div class="summary-item">
+                <span class="summary-label">Email</span>
+                <span class="summary-value">{{ application.email }}</span>
+            </div>
+            
+            <div class="summary-item">
+                <span class="summary-label">Language</span>
+                <span class="summary-value">{{ application.language.flag_emoji }} {{ application.language.name }}</span>
+            </div>
+            
+            <div class="course-list">
+                <h3 style="margin-bottom: 10px; color: #666;">Selected Courses:</h3>
+                {% for level in levels %}
+                <div class="course-item">
+                    <span>{{ level.get_level_display }}</span>
+                    <span>₹{{ level.price }}</span>
+                </div>
+                {% endfor %}
+            </div>
+            
+            <div class="total-section">
+                <div class="total-amount">
+                    <span>Total Amount</span>
+                    <span>₹{{ total_amount }}</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Payment Options -->
+        <div class="payment-options">
+            <h2 class="option-title">Select Payment Method</h2>
+            
+            <div class="payment-methods">
+                <div class="payment-method" data-method="card">
+                    <div class="method-icon">💳</div>
+                    <div class="method-name">Credit/Debit Card</div>
+                </div>
+                
+                <div class="payment-method" data-method="upi">
+                    <div class="method-icon">📱</div>
+                    <div class="method-name">UPI</div>
+                </div>
+                
+                <div class="payment-method" data-method="netbanking">
+                    <div class="method-icon">🏦</div>
+                    <div class="method-name">Net Banking</div>
+                </div>
+                
+                <div class="payment-method" data-method="wallet">
+                    <div class="method-icon">👛</div>
+                    <div class="method-name">Wallet</div>
+                </div>
+            </div>
+            
+            <button class="pay-btn" id="payBtn" disabled>
+                Proceed to Pay ₹{{ total_amount }}
+            </button>
+            
+            <div class="secure-notice">
+                <span class="secure-icon">🔒</span>
+                <span>Your payment is secured with 256-bit SSL encryption</span>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const applicationId = parseInt('{{ application_id }}');
+        const totalAmount = parseFloat('{{ total_amount }}');
+        const razorpayKeyId = '{{ razorpay_key_id }}';
+        const createOrderUrl = '{% url "create-payment-order" %}';
+        const paymentSuccessUrl = '{% url "payment-success" %}';
+        
+        // Payment method selection
+        const paymentMethods = document.querySelectorAll('.payment-method');
+        const payBtn = document.getElementById('payBtn');
+        let selectedMethod = null;
+
+        paymentMethods.forEach(method => {
+            method.addEventListener('click', function() {
+                // Remove selected class from all methods
+                paymentMethods.forEach(m => m.classList.remove('selected'));
+                
+                // Add selected class to clicked method
+                this.classList.add('selected');
+                selectedMethod = this.dataset.method;
+                
+                // Enable pay button
+                payBtn.disabled = false;
+            });
+        });
+
+        // Handle payment button click - Simplified for now (skips actual payment)
+        payBtn.addEventListener('click', async function() {
+            if (!selectedMethod) {
+                alert('Please select a payment method');
+                return;
+            }
+            
+            // Disable button during processing
+            payBtn.disabled = true;
+            payBtn.textContent = 'Processing...';
+            
+            try {
+                // For now, just update the application status and redirect to dashboard
+                // Actual payment integration will be added later
+                const formData = new FormData();
+                formData.append('application_id', applicationId);
+                formData.append('csrfmiddlewaretoken', '{{ csrf_token }}');
+                
+                // Update application status to submitted (simulating payment success)
+                const response = await fetch('{% url "payment-success" %}?application_id=' + applicationId, {
+                    method: 'GET',
+                    headers: {
+                        'X-CSRFToken': '{{ csrf_token }}'
+                    }
+                });
+                
+                // Redirect to dashboard
+                window.location.href = '{% url "dashboard" %}';
+                
+            } catch (error) {
+                console.error('Error:', error);
+                alert('An error occurred. Please try again.');
+                payBtn.disabled = false;
+                payBtn.textContent = `Proceed to Pay ₹${totalAmount}`;
+            }
+        });
+    </script>
+</body>
+</html>
+

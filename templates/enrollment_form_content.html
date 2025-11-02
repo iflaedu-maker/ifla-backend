@@ -1,0 +1,374 @@
+{% if error %}
+<div class="enrollment-error-message">
+    {{ error }}
+</div>
+{% endif %}
+
+<form method="POST" enctype="multipart/form-data" id="enrollmentForm" action="{% url 'enrollment-form' %}">
+    {% csrf_token %}
+    
+    <!-- Personal Information Section -->
+    <div class="enrollment-form-section">
+        <h2 class="enrollment-section-title">Personal Information</h2>
+        
+        <div class="enrollment-form-row">
+            <div class="enrollment-form-field">
+                <label class="enrollment-form-label required" for="full_name">Full Name</label>
+                <input type="text" id="full_name" name="full_name" class="enrollment-form-input" 
+                       value="{{ user.get_full_name }}" required>
+            </div>
+            
+            <div class="enrollment-form-field">
+                <label class="enrollment-form-label required" for="date_of_birth">Date of Birth</label>
+                <input type="date" id="date_of_birth" name="date_of_birth" class="enrollment-form-input" 
+                       value="{{ user.date_of_birth|date:'Y-m-d' }}" required>
+            </div>
+        </div>
+        
+        <div class="enrollment-form-row">
+            <div class="enrollment-form-field">
+                <label class="enrollment-form-label required" for="email">Email Address</label>
+                <input type="email" id="email" name="email" class="enrollment-form-input" 
+                       value="{{ user.email }}" required>
+            </div>
+            
+            <div class="enrollment-form-field">
+                <label class="enrollment-form-label required" for="phone_number">Phone Number</label>
+                <input type="tel" id="phone_number" name="phone_number" class="enrollment-form-input" 
+                       value="{{ user.phone_number }}" placeholder="+1234567890" required>
+            </div>
+        </div>
+        
+        <div class="enrollment-form-field">
+            <label class="enrollment-form-label required" for="address">Address</label>
+            <textarea id="address" name="address" class="enrollment-form-input enrollment-form-textarea" 
+                      rows="3" placeholder="Enter your full address" required></textarea>
+        </div>
+        
+        <div class="enrollment-form-field">
+            <label class="enrollment-form-label required">Photo</label>
+            <p class="enrollment-help-text">Upload your recent photo (JPG, PNG)</p>
+            <div class="enrollment-file-upload">
+                <input type="file" id="photo" name="photo" 
+                       class="enrollment-file-input" accept=".jpg,.jpeg,.png" required>
+                <label for="photo" class="enrollment-file-label" id="photoLabel">
+                    <svg class="enrollment-file-icon" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                    </svg>
+                    <span class="enrollment-file-text">Click to upload photo</span>
+                </label>
+            </div>
+        </div>
+    </div>
+
+    <!-- Course Selection Section -->
+    <div class="enrollment-form-section">
+        <h2 class="enrollment-section-title">Course Selection</h2>
+        
+        <div class="enrollment-form-field">
+            <label class="enrollment-form-label required" for="language">Select Language</label>
+            <p class="enrollment-help-text" style="margin-top: -5px; margin-bottom: 12px; color: rgba(255, 255, 255, 0.6); font-size: 13px;">Choose the language you want to learn</p>
+            <select id="language" name="language" class="enrollment-form-select" required>
+                <option value="">-- Select a Language --</option>
+                {% for lang in languages %}
+                <option value="{{ lang.id }}" 
+                        {% if selected_language and selected_language.id == lang.id %}selected{% endif %}>
+                    {% if lang.flag_emoji %}{{ lang.flag_emoji }} {% endif %}{{ lang.name }}
+                </option>
+                {% endfor %}
+            </select>
+        </div>
+        
+        <div class="enrollment-form-field full-width" id="levelsContainer" style="display: none;">
+            <label class="enrollment-form-label required">Select Level(s)</label>
+            <p class="enrollment-help-text">You can select multiple levels by clicking on them.</p>
+            <div id="levelCheckboxes" class="enrollment-level-options">
+                <!-- Level checkboxes will be populated here by JavaScript -->
+            </div>
+        </div>
+        
+        <div id="totalAmountContainer" style="display: none;">
+            <div class="enrollment-total-amount">
+                Total Amount: ₹<span id="totalAmount">0</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Class Schedule Section -->
+    <div class="enrollment-form-section">
+        <h2 class="enrollment-section-title">Class Schedule Preference</h2>
+        
+        <div class="enrollment-form-field">
+            <label class="enrollment-form-label required" for="schedule_type">Schedule Type</label>
+            <p class="enrollment-help-text" style="margin-top: -5px; margin-bottom: 12px; color: rgba(255, 255, 255, 0.6); font-size: 13px;">Choose your preferred class schedule</p>
+            <select id="schedule_type" name="schedule_type" class="enrollment-form-select" required>
+                <option value="">-- Select Schedule Type --</option>
+                <option value="weekday">Weekday (1 hour per class)</option>
+                <option value="weekend">Weekend (2 hours per class)</option>
+            </select>
+        </div>
+        
+        <div class="enrollment-form-field" id="preferredHourContainer" style="display: none;">
+            <label class="enrollment-form-label required" for="preferred_hour">Preferred Hour (Weekday)</label>
+            <p class="enrollment-help-text" style="margin-top: -5px; margin-bottom: 12px; color: rgba(255, 255, 255, 0.6); font-size: 13px;">Select your preferred time slot</p>
+            <select id="preferred_hour" name="preferred_hour" class="enrollment-form-select">
+                <option value="">-- Select Preferred Hour --</option>
+                <option value="9:00 AM">9:00 AM</option>
+                <option value="10:00 AM">10:00 AM</option>
+                <option value="11:00 AM">11:00 AM</option>
+                <option value="12:00 PM">12:00 PM</option>
+                <option value="1:00 PM">1:00 PM</option>
+                <option value="2:00 PM">2:00 PM</option>
+                <option value="3:00 PM">3:00 PM</option>
+                <option value="4:00 PM">4:00 PM</option>
+                <option value="5:00 PM">5:00 PM</option>
+                <option value="6:00 PM">6:00 PM</option>
+                <option value="7:00 PM">7:00 PM</option>
+                <option value="8:00 PM">8:00 PM</option>
+            </select>
+        </div>
+    </div>
+
+    <!-- Verification Documents Section -->
+    <div class="enrollment-form-section">
+        <h2 class="enrollment-section-title">Verification Documents</h2>
+        
+        <div class="enrollment-form-field">
+            <label class="enrollment-form-label required">Personal Verification ID</label>
+            <p class="enrollment-help-text">Upload a government-issued ID (PDF, Image, or Document)</p>
+            <div class="enrollment-file-upload">
+                <input type="file" id="verification_document" name="verification_document" 
+                       class="enrollment-file-input" accept=".pdf,.jpg,.jpeg,.png,.doc,.docx" required>
+                <label for="verification_document" class="enrollment-file-label" id="verificationLabel">
+                    <svg class="enrollment-file-icon" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"/>
+                    </svg>
+                    <span class="enrollment-file-text">Click to upload verification document</span>
+                </label>
+            </div>
+        </div>
+        
+        <div class="enrollment-form-field">
+            <label class="enrollment-form-label required">Signature</label>
+            <p class="enrollment-help-text">Upload an image of your signature (JPG, PNG)</p>
+            <div class="enrollment-file-upload">
+                <input type="file" id="signature" name="signature" 
+                       class="enrollment-file-input" accept=".jpg,.jpeg,.png" required>
+                <label for="signature" class="enrollment-file-label" id="signatureLabel">
+                    <svg class="enrollment-file-icon" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"/>
+                    </svg>
+                    <span class="enrollment-file-text">Click to upload signature</span>
+                </label>
+            </div>
+        </div>
+    </div>
+
+    <button type="submit" class="enrollment-submit-btn">Submit Application & Proceed to Payment</button>
+</form>
+
+<script>
+(function() {
+    // Language data from Django
+    const languagesData = {
+        {% for lang in languages %}
+        "{{ lang.id }}": {
+            name: "{{ lang.name }}",
+            levels: [
+                {% for level in lang.levels.all %}
+                {
+                    id: {{ level.id }},
+                    level: "{{ level.level }}",
+                    display: "{{ level.get_level_display }}",
+                    price: {{ level.price }}
+                }{% if not forloop.last %},{% endif %}
+                {% endfor %}
+            ]
+        }{% if not forloop.last %},{% endif %}
+        {% endfor %}
+    };
+
+    // Handle language selection
+    const languageSelect = document.getElementById('language');
+    const levelsContainer = document.getElementById('levelsContainer');
+    const levelCheckboxes = document.getElementById('levelCheckboxes');
+    const totalAmountContainer = document.getElementById('totalAmountContainer');
+    const totalAmountSpan = document.getElementById('totalAmount');
+
+    if (languageSelect) {
+        languageSelect.addEventListener('change', function() {
+            const languageId = this.value;
+            
+            if (languageId && languagesData[languageId]) {
+                const levels = languagesData[languageId].levels;
+                
+                // Clear previous level options
+                levelCheckboxes.innerHTML = '';
+                
+                // Create checkbox for each level
+                levels.forEach(level => {
+                    const div = document.createElement('div');
+                    div.innerHTML = `
+                        <input type="checkbox" id="level_${level.id}" name="levels" 
+                               value="${level.id}" class="enrollment-level-checkbox" data-price="${level.price}">
+                        <label for="level_${level.id}" class="enrollment-level-label">
+                            <span class="enrollment-level-name">${level.display}</span>
+                            <span class="enrollment-level-price">₹${level.price.toLocaleString()}</span>
+                        </label>
+                    `;
+                    levelCheckboxes.appendChild(div);
+                });
+                
+                levelsContainer.style.display = 'block';
+                
+                // Add event listeners to checkboxes for total calculation
+                document.querySelectorAll('.enrollment-level-checkbox').forEach(checkbox => {
+                    checkbox.addEventListener('change', calculateTotal);
+                });
+            } else {
+                levelsContainer.style.display = 'none';
+                totalAmountContainer.style.display = 'none';
+            }
+        });
+
+        // Calculate total amount
+        function calculateTotal() {
+            const checkedBoxes = document.querySelectorAll('.enrollment-level-checkbox:checked');
+            let total = 0;
+            
+            checkedBoxes.forEach(checkbox => {
+                total += parseFloat(checkbox.dataset.price);
+            });
+            
+            if (checkedBoxes.length > 0) {
+                totalAmountSpan.textContent = total.toLocaleString();
+                totalAmountContainer.style.display = 'block';
+            } else {
+                totalAmountContainer.style.display = 'none';
+            }
+        }
+
+        // Handle schedule type selection
+        const scheduleTypeSelect = document.getElementById('schedule_type');
+        const preferredHourContainer = document.getElementById('preferredHourContainer');
+        const preferredHourSelect = document.getElementById('preferred_hour');
+        
+        if (scheduleTypeSelect && preferredHourContainer) {
+            scheduleTypeSelect.addEventListener('change', function() {
+                if (this.value === 'weekday') {
+                    preferredHourContainer.style.display = 'block';
+                    preferredHourSelect.required = true;
+                } else {
+                    preferredHourContainer.style.display = 'none';
+                    preferredHourSelect.required = false;
+                    preferredHourSelect.value = '';
+                }
+            });
+        }
+
+        // Handle file uploads
+        const photoInput = document.getElementById('photo');
+        const photoLabel = document.getElementById('photoLabel');
+        const verificationInput = document.getElementById('verification_document');
+        const verificationLabel = document.getElementById('verificationLabel');
+        const signatureInput = document.getElementById('signature');
+        const signatureLabel = document.getElementById('signatureLabel');
+
+        if (photoInput && photoLabel) {
+            photoInput.addEventListener('change', function() {
+                if (this.files.length > 0) {
+                    photoLabel.classList.add('has-file');
+                    photoLabel.querySelector('.enrollment-file-text').textContent = this.files[0].name;
+                }
+            });
+        }
+
+        if (verificationInput && verificationLabel) {
+            verificationInput.addEventListener('change', function() {
+                if (this.files.length > 0) {
+                    verificationLabel.classList.add('has-file');
+                    verificationLabel.querySelector('.enrollment-file-text').textContent = this.files[0].name;
+                }
+            });
+        }
+
+        if (signatureInput && signatureLabel) {
+            signatureInput.addEventListener('change', function() {
+                if (this.files.length > 0) {
+                    signatureLabel.classList.add('has-file');
+                    signatureLabel.querySelector('.enrollment-file-text').textContent = this.files[0].name;
+                }
+            });
+        }
+
+        // Form validation and submission handling
+        const enrollmentForm = document.getElementById('enrollmentForm');
+        if (enrollmentForm) {
+            enrollmentForm.addEventListener('submit', function(e) {
+                const checkedLevels = document.querySelectorAll('.enrollment-level-checkbox:checked');
+                
+                if (checkedLevels.length === 0) {
+                    e.preventDefault();
+                    alert('Please select at least one course level');
+                    return false;
+                }
+                
+                // Validate schedule type
+                const scheduleType = document.getElementById('schedule_type').value;
+                if (!scheduleType) {
+                    e.preventDefault();
+                    alert('Please select a schedule type');
+                    return false;
+                }
+                
+                // Validate preferred hour for weekday
+                if (scheduleType === 'weekday') {
+                    const preferredHour = document.getElementById('preferred_hour').value;
+                    if (!preferredHour) {
+                        e.preventDefault();
+                        alert('Please select your preferred hour for weekday classes');
+                        return false;
+                    }
+                }
+                
+                // Show loading state when form is valid and submitting
+                const submitBtn = enrollmentForm.querySelector('.enrollment-submit-btn');
+                if (submitBtn) {
+                    submitBtn.disabled = true;
+                    submitBtn.textContent = 'Processing...';
+                    submitBtn.style.opacity = '0.7';
+                }
+            });
+        }
+
+        // Trigger language selection if pre-selected (with a delay to ensure DOM is ready)
+        setTimeout(() => {
+            if (languageSelect && languageSelect.value) {
+                console.log('Pre-selected language ID:', languageSelect.value);
+                // Trigger change event to load levels
+                const changeEvent = new Event('change', { bubbles: true });
+                languageSelect.dispatchEvent(changeEvent);
+            } else {
+                // Check if language was pre-selected but not showing (sometimes happens with template rendering)
+                const urlParams = new URLSearchParams(window.location.search);
+                const langParam = urlParams.get('language') || urlParams.get('language_id');
+                if (langParam && !languageSelect.value) {
+                    console.log('Language parameter found but not selected:', langParam);
+                    // Try to find and select the language by name from options
+                    const options = languageSelect.querySelectorAll('option');
+                    for (let option of options) {
+                        if (option.textContent.includes(langParam) || option.value === langParam) {
+                            languageSelect.value = option.value;
+                            const changeEvent = new Event('change', { bubbles: true });
+                            languageSelect.dispatchEvent(changeEvent);
+                            console.log('Manually selected language:', option.value, option.textContent);
+                            break;
+                        }
+                    }
+                }
+            }
+        }, 200);
+    }
+})();
+</script>
+

@@ -1,0 +1,1238 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - IFLA</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@100;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Montserrat', sans-serif;
+            background: linear-gradient(135deg, #0a0a0f 0%, #1a1a24 50%, #0f0f14 100%);
+            min-height: 100vh;
+            color: #fff;
+            overflow-x: hidden;
+        }
+
+        .dashboard-container {
+            max-width: 1600px;
+            margin: 0 auto;
+            padding: 140px 30px 60px;
+            position: relative;
+        }
+
+        /* Animated Background - Optimized for performance */
+        .dashboard-container::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                radial-gradient(circle at 20% 50%, rgba(76, 175, 80, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 80% 80%, rgba(33, 150, 243, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 40% 20%, rgba(156, 39, 176, 0.1) 0%, transparent 50%);
+            z-index: -1;
+            will-change: opacity;
+            transform: translateZ(0); /* Force GPU acceleration */
+            /* Removed heavy animation to reduce lag */
+        }
+
+        /* Dashboard Header - Optimized */
+        .dashboard-header {
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0.05) 100%);
+            backdrop-filter: blur(10px); /* Reduced from 30px for better performance */
+            -webkit-backdrop-filter: blur(10px);
+            border-radius: 24px;
+            padding: 40px;
+            margin-bottom: 40px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            display: flex;
+            align-items: center;
+            gap: 30px;
+        }
+
+        .user-photo-container {
+            flex-shrink: 0;
+        }
+
+        .user-photo {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 4px solid rgba(76, 175, 80, 0.3);
+            box-shadow: 0 8px 24px rgba(76, 175, 80, 0.2);
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .user-photo-placeholder {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, rgba(76, 175, 80, 0.3) 0%, rgba(33, 150, 243, 0.3) 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 48px;
+            border: 4px solid rgba(76, 175, 80, 0.3);
+            box-shadow: 0 8px 24px rgba(76, 175, 80, 0.2);
+        }
+
+        .dashboard-header-content {
+            flex: 1;
+        }
+
+        .dashboard-header h1 {
+            font-size: 42px;
+            font-weight: 800;
+            background: linear-gradient(135deg, #fff 0%, #4CAF50 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 12px;
+            letter-spacing: -1px;
+        }
+
+        .dashboard-header p {
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 18px;
+            font-weight: 400;
+        }
+
+        /* Stats Cards - Modern Horizontal Layout */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+            margin-bottom: 40px;
+        }
+        
+        @media (max-width: 768px) {
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .stat-card {
+            position: relative;
+            background: rgba(15, 15, 20, 0.6);
+            backdrop-filter: blur(20px);
+            border-radius: 24px;
+            padding: 0;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            min-height: 140px;
+        }
+        
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 6px;
+            height: 100%;
+            transition: width 0.4s ease;
+        }
+        
+        .stat-card:hover {
+            transform: translateX(4px);
+            border-color: rgba(255, 255, 255, 0.15);
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.3);
+        }
+        
+        .stat-card:hover::before {
+            width: 100%;
+            opacity: 0.1;
+        }
+        
+        /* Color themes for each card */
+        .stat-card:nth-child(1) {
+            border-left: 4px solid #4CAF50;
+        }
+        .stat-card:nth-child(1)::before {
+            background: linear-gradient(135deg, rgba(76, 175, 80, 0.3) 0%, rgba(76, 175, 80, 0.1) 100%);
+        }
+        .stat-card:nth-child(1):hover {
+            box-shadow: 0 12px 40px rgba(76, 175, 80, 0.25);
+        }
+        
+        .stat-card:nth-child(2) {
+            border-left: 4px solid #2196F3;
+        }
+        .stat-card:nth-child(2)::before {
+            background: linear-gradient(135deg, rgba(33, 150, 243, 0.3) 0%, rgba(33, 150, 243, 0.1) 100%);
+        }
+        .stat-card:nth-child(2):hover {
+            box-shadow: 0 12px 40px rgba(33, 150, 243, 0.25);
+        }
+        
+        .stat-card:nth-child(3) {
+            border-left: 4px solid #9C27B0;
+        }
+        .stat-card:nth-child(3)::before {
+            background: linear-gradient(135deg, rgba(156, 39, 176, 0.3) 0%, rgba(156, 39, 176, 0.1) 100%);
+        }
+        .stat-card:nth-child(3):hover {
+            box-shadow: 0 12px 40px rgba(156, 39, 176, 0.25);
+        }
+        
+        .stat-card:nth-child(4) {
+            border-left: 4px solid #FF9800;
+        }
+        .stat-card:nth-child(4)::before {
+            background: linear-gradient(135deg, rgba(255, 152, 0, 0.3) 0%, rgba(255, 152, 0, 0.1) 100%);
+        }
+        .stat-card:nth-child(4):hover {
+            box-shadow: 0 12px 40px rgba(255, 152, 0, 0.25);
+        }
+
+        .stat-card-content {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            width: 100%;
+            padding: 28px 32px;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .stat-left {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            flex: 1;
+        }
+
+        .stat-icon {
+            width: 72px;
+            height: 72px;
+            border-radius: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            flex-shrink: 0;
+        }
+        
+        .stat-card:nth-child(1) .stat-icon {
+            background: linear-gradient(135deg, rgba(76, 175, 80, 0.2) 0%, rgba(76, 175, 80, 0.1) 100%);
+            border: 2px solid rgba(76, 175, 80, 0.3);
+        }
+        
+        .stat-card:nth-child(2) .stat-icon {
+            background: linear-gradient(135deg, rgba(33, 150, 243, 0.2) 0%, rgba(33, 150, 243, 0.1) 100%);
+            border: 2px solid rgba(33, 150, 243, 0.3);
+        }
+        
+        .stat-card:nth-child(3) .stat-icon {
+            background: linear-gradient(135deg, rgba(156, 39, 176, 0.2) 0%, rgba(156, 39, 176, 0.1) 100%);
+            border: 2px solid rgba(156, 39, 176, 0.3);
+        }
+        
+        .stat-card:nth-child(4) .stat-icon {
+            background: linear-gradient(135deg, rgba(255, 152, 0, 0.2) 0%, rgba(255, 152, 0, 0.1) 100%);
+            border: 2px solid rgba(255, 152, 0, 0.3);
+        }
+
+        .stat-icon svg {
+            width: 36px;
+            height: 36px;
+            stroke: currentColor;
+        }
+        
+        .stat-card:nth-child(1) .stat-icon svg {
+            color: #66BB6A;
+        }
+        
+        .stat-card:nth-child(2) .stat-icon svg {
+            color: #42A5F5;
+        }
+        
+        .stat-card:nth-child(3) .stat-icon svg {
+            color: #BA68C8;
+        }
+        
+        .stat-card:nth-child(4) .stat-icon svg {
+            color: #FFB74D;
+        }
+        
+        .stat-info {
+            flex: 1;
+        }
+        
+        .stat-label {
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 13px;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 1.2px;
+            margin-bottom: 8px;
+            display: block;
+        }
+        
+        .stat-value {
+            font-size: 42px;
+            font-weight: 800;
+            line-height: 1;
+            margin: 0;
+        }
+        
+        .stat-card:nth-child(1) .stat-value {
+            color: #66BB6A;
+        }
+        
+        .stat-card:nth-child(2) .stat-value {
+            color: #42A5F5;
+        }
+        
+        .stat-card:nth-child(3) .stat-value {
+            color: #BA68C8;
+        }
+        
+        .stat-card:nth-child(4) .stat-value {
+            color: #FFB74D;
+        }
+        
+        .stat-right {
+            display: flex;
+            align-items: center;
+            opacity: 0.3;
+            transition: opacity 0.3s;
+        }
+        
+        .stat-card:hover .stat-right {
+            opacity: 0.6;
+        }
+        
+        .stat-arrow {
+            width: 24px;
+            height: 24px;
+            color: rgba(255, 255, 255, 0.5);
+        }
+
+        /* Dashboard Grid */
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(450px, 1fr));
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+
+        .dashboard-card {
+            background: rgba(255, 255, 255, 0.08);
+            border-radius: 20px;
+            padding: 40px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            transition: border-color 0.2s ease;
+        }
+
+        .dashboard-card:hover {
+            border-color: rgba(76, 175, 80, 0.4);
+        }
+
+        .card-title {
+            font-size: 28px;
+            font-weight: 700;
+            color: #fff;
+            margin-bottom: 30px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .card-icon {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, #4CAF50 0%, #45a049 100%);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 8px;
+            box-shadow: 0 8px 20px rgba(76, 175, 80, 0.3);
+        }
+
+        .card-icon svg {
+            width: 24px;
+            height: 24px;
+            fill: white;
+        }
+
+        /* Enrollment Items */
+        .enrollment-item {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 12px;
+            padding: 24px;
+            margin-bottom: 16px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-left: 3px solid transparent;
+            transition: border-left-color 0.2s ease;
+        }
+
+        .enrollment-item:hover {
+            border-left-color: #4CAF50;
+        }
+
+        .enrollment-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+        }
+
+        .enrollment-language {
+            color: #fff;
+            font-size: 20px;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .language-flag {
+            font-size: 24px;
+        }
+
+        .enrollment-status {
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .status-active {
+            background: linear-gradient(135deg, rgba(76, 175, 80, 0.2) 0%, rgba(76, 175, 80, 0.1) 100%);
+            color: #4CAF50;
+            border: 1px solid rgba(76, 175, 80, 0.3);
+            box-shadow: 0 4px 15px rgba(76, 175, 80, 0.2);
+        }
+
+        .status-completed {
+            background: linear-gradient(135deg, rgba(33, 150, 243, 0.2) 0%, rgba(33, 150, 243, 0.1) 100%);
+            color: #2196F3;
+            border: 1px solid rgba(33, 150, 243, 0.3);
+            box-shadow: 0 4px 15px rgba(33, 150, 243, 0.2);
+        }
+
+        .status-pending {
+            background: linear-gradient(135deg, rgba(255, 193, 7, 0.2) 0%, rgba(255, 193, 7, 0.1) 100%);
+            color: #FFC107;
+            border: 1px solid rgba(255, 193, 7, 0.3);
+            box-shadow: 0 4px 15px rgba(255, 193, 7, 0.2);
+        }
+
+        .enrollment-level {
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 15px;
+            margin-bottom: 16px;
+            font-weight: 500;
+        }
+
+        .progress-container {
+            margin-bottom: 12px;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 10px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            overflow: hidden;
+            position: relative;
+            box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #4CAF50 0%, #45a049 50%, #2196F3 100%);
+            border-radius: 10px;
+            transition: width 1s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .progress-fill::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            bottom: 0;
+            right: 0;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+        }
+
+        .progress-text {
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 13px;
+            font-weight: 600;
+            margin-top: 8px;
+        }
+
+        /* Schedule Items */
+        .schedule-item {
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.08) 0%, rgba(255, 255, 255, 0.03) 100%);
+            border-radius: 16px;
+            padding: 20px;
+            margin-bottom: 16px;
+            border-left: 4px solid #4CAF50;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .schedule-item::before {
+            content: '';
+            position: absolute;
+            right: 0;
+            top: 0;
+            width: 100px;
+            height: 100px;
+            background: radial-gradient(circle, rgba(76, 175, 80, 0.1) 0%, transparent 70%);
+            border-radius: 50%;
+            transform: translate(30%, -30%);
+        }
+
+        .schedule-item:hover {
+            transform: translateX(8px);
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.12) 0%, rgba(255, 255, 255, 0.06) 100%);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        }
+
+        .schedule-day {
+            color: #fff;
+            font-weight: 700;
+            font-size: 18px;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .schedule-time {
+            color: #4CAF50;
+            font-size: 15px;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .schedule-details {
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 13px;
+            margin-top: 8px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .schedule-details a {
+            color: #4CAF50;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .schedule-details a:hover {
+            color: #45a049;
+            text-decoration: underline;
+        }
+
+        /* Certificate & Invoice Items */
+        .certificate-item, .invoice-item {
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.08) 0%, rgba(255, 255, 255, 0.03) 100%);
+            border-radius: 16px;
+            padding: 24px;
+            margin-bottom: 16px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .certificate-item::before, .invoice-item::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.05), transparent);
+            transition: left 0.5s ease;
+            z-index: 1;
+            pointer-events: none;
+        }
+
+        .certificate-item:hover::before, .invoice-item:hover::before {
+            left: 100%;
+        }
+
+        .certificate-item:hover, .invoice-item:hover {
+            transform: translateY(-4px);
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.12) 0%, rgba(255, 255, 255, 0.06) 100%);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.3);
+        }
+
+        .certificate-number, .invoice-number {
+            color: #fff;
+            font-weight: 700;
+            font-size: 18px;
+            margin-bottom: 8px;
+        }
+
+        .certificate-date, .invoice-date {
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 14px;
+            margin-bottom: 4px;
+        }
+
+        .invoice-amount {
+            color: #4CAF50;
+            font-size: 28px;
+            font-weight: 800;
+            margin-top: 12px;
+            text-shadow: 0 2px 10px rgba(76, 175, 80, 0.3);
+        }
+
+        .invoice-status {
+            margin-top: 12px;
+        }
+
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: rgba(255, 255, 255, 0.5);
+        }
+
+        .empty-state-icon {
+            font-size: 64px;
+            margin-bottom: 20px;
+            opacity: 0.6;
+        }
+
+        .empty-state p {
+            font-size: 16px;
+            margin-bottom: 20px;
+            color: rgba(255, 255, 255, 0.6);
+        }
+
+        .empty-state a {
+            color: #4CAF50;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 16px;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.3s ease;
+            padding: 12px 24px;
+            border: 1px solid rgba(76, 175, 80, 0.3);
+            border-radius: 12px;
+            background: rgba(76, 175, 80, 0.1);
+        }
+
+        .empty-state a:hover {
+            background: rgba(76, 175, 80, 0.2);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(76, 175, 80, 0.2);
+        }
+
+        /* Download Links & Buttons */
+        .download-link {
+            color: #4CAF50;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 14px;
+            font-family: 'Montserrat', sans-serif;
+            margin-top: 12px;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: background 0.2s ease, border-color 0.2s ease;
+            padding: 10px 20px;
+            border: 1px solid rgba(76, 175, 80, 0.4);
+            border-radius: 8px;
+            background: rgba(76, 175, 80, 0.15);
+            cursor: pointer;
+        }
+
+        .download-link:hover:not(:disabled) {
+            background: rgba(76, 175, 80, 0.25);
+            border-color: rgba(76, 175, 80, 0.6);
+        }
+
+        .download-link:active:not(:disabled) {
+            background: rgba(76, 175, 80, 0.3);
+        }
+
+        .download-link:disabled {
+            opacity: 0.7;
+            cursor: not-allowed;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .dashboard-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .dashboard-header {
+                flex-direction: column;
+                text-align: center;
+                padding: 30px 20px;
+            }
+            
+            .dashboard-header h1 {
+                font-size: 32px;
+            }
+            
+            .user-photo,
+            .user-photo-placeholder {
+                width: 100px;
+                height: 100px;
+            }
+            
+            .user-photo-placeholder {
+                font-size: 40px;
+            }
+            
+            .dashboard-card {
+                padding: 30px 20px;
+            }
+        }
+
+        /* Removed all animations for better performance */
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-left">
+            <div class="logo">IFLA</div>
+        </div>
+        <div class="nav-center">
+            <div class="nav-links">
+                <a href="{% url 'index' %}" class="nav-link">Home</a>
+                <a href="{% url 'languages' %}" class="nav-link">Courses / Languages</a>
+                <a href="#" class="nav-link">About Us</a>
+                <a href="{% url 'index' %}#contact" class="nav-link">Contact</a>
+            </div>
+        </div>
+        <div class="nav-right">
+            <a href="{% url 'dashboard' %}" class="nav-btn nav-btn-login">Dashboard</a>
+            <a href="/api/auth/logout-redirect/" class="nav-btn nav-btn-signup">Logout</a>
+        </div>
+    </nav>
+
+    <div class="dashboard-container">
+        <!-- Header -->
+        <div class="dashboard-header">
+            <div class="user-photo-container">
+                {% if user_photo %}
+                    <img src="{{ user_photo.url }}" alt="Profile Photo" class="user-photo">
+                {% else %}
+                    <div class="user-photo-placeholder">
+                        {{ user.first_name|first|default:user.email|first|upper }}
+                    </div>
+                {% endif %}
+            </div>
+            <div class="dashboard-header-content">
+                <h1>Welcome back, {{ user.first_name|default:user.email }}! 👋</h1>
+                <p>Manage your language learning journey</p>
+            </div>
+        </div>
+
+        <!-- Stats -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-card-content">
+                    <div class="stat-left">
+                        <div class="stat-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
+                            </svg>
+                        </div>
+                        <div class="stat-info">
+                            <span class="stat-label">Enrolled Courses</span>
+                            <div class="stat-value">{{ enrollments_count }}</div>
+                        </div>
+                    </div>
+                    <div class="stat-right">
+                        <svg class="stat-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M5 12h14M12 5l7 7-7 7"/>
+                        </svg>
+                    </div>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-card-content">
+                    <div class="stat-left">
+                        <div class="stat-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <circle cx="12" cy="12" r="10"/>
+                                <path d="M12 6v6l4 2"/>
+                            </svg>
+                        </div>
+                        <div class="stat-info">
+                            <span class="stat-label">Active Classes</span>
+                            <div class="stat-value">{{ active_enrollments_count }}</div>
+                        </div>
+                    </div>
+                    <div class="stat-right">
+                        <svg class="stat-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M5 12h14M12 5l7 7-7 7"/>
+                        </svg>
+                    </div>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-card-content">
+                    <div class="stat-left">
+                        <div class="stat-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                                <path d="M14 2v6h6"/>
+                            </svg>
+                        </div>
+                        <div class="stat-info">
+                            <span class="stat-label">Certificates</span>
+                            <div class="stat-value">{{ certificates_count }}</div>
+                        </div>
+                    </div>
+                    <div class="stat-right">
+                        <svg class="stat-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M5 12h14M12 5l7 7-7 7"/>
+                        </svg>
+                    </div>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-card-content">
+                    <div class="stat-left">
+                        <div class="stat-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
+                            </svg>
+                        </div>
+                        <div class="stat-info">
+                            <span class="stat-label">Invoices</span>
+                            <div class="stat-value">{{ invoices_count }}</div>
+                        </div>
+                    </div>
+                    <div class="stat-right">
+                        <svg class="stat-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M5 12h14M12 5l7 7-7 7"/>
+                        </svg>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="dashboard-grid">
+            <!-- Enrolled Languages -->
+            <div class="dashboard-card">
+                <h2 class="card-title">
+                    <div class="card-icon">
+                        <svg viewBox="0 0 24 24" fill="none">
+                            <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" stroke="white" stroke-width="2"/>
+                        </svg>
+                    </div>
+                    Enrolled Languages
+                </h2>
+                {% if enrollments %}
+                    {% for enrollment in enrollments %}
+                    <div class="enrollment-item">
+                        <div class="enrollment-header">
+                            <span class="enrollment-language">
+                                <span class="language-flag">{{ enrollment.course_level.language.flag_emoji|default:"🌐" }}</span>
+                                {{ enrollment.course_level.language.name }}
+                            </span>
+                            <span class="enrollment-status status-{{ enrollment.status }}">{{ enrollment.get_status_display }}</span>
+                        </div>
+                        <div class="enrollment-level">{{ enrollment.course_level.get_level_display }}</div>
+                        <div class="progress-container">
+                            <div class="progress-bar">
+                                <div class="progress-fill" style="width: {{ enrollment.progress_percentage }}%"></div>
+                            </div>
+                            <div class="progress-text">Progress: {{ enrollment.progress_percentage }}%</div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                {% else %}
+                    <div class="empty-state">
+                        <div class="empty-state-icon">📚</div>
+                        <p>No enrollments yet. Start learning by enrolling in a language course!</p>
+                        <a href="{% url 'languages' %}">Browse Languages <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M6 12l4-4-4-4" stroke="currentColor" stroke-width="2"/></svg></a>
+                    </div>
+                {% endif %}
+            </div>
+
+            <!-- Class Timings -->
+            <div class="dashboard-card">
+                <h2 class="card-title">
+                    <div class="card-icon">
+                        <svg viewBox="0 0 24 24" fill="none">
+                            <circle cx="12" cy="12" r="10" stroke="white" stroke-width="2"/>
+                            <path d="M12 6v6l4 2" stroke="white" stroke-width="2"/>
+                        </svg>
+                    </div>
+                    Class Schedule
+                </h2>
+                {% comment %}First, show all enrollments with assigned class schedules{% endcomment %}
+                {% for enrollment in enrollments %}
+                    {% if enrollment.class_schedule %}
+                    <div class="schedule-item">
+                        <div class="schedule-day">
+                            📅 {{ enrollment.course_level.language.name }} - {{ enrollment.class_schedule.get_day_of_week_display }}
+                        </div>
+                        <div class="schedule-time">
+                            🕐 {{ enrollment.class_schedule.start_time|time:"g:i A" }} - {{ enrollment.class_schedule.end_time|time:"g:i A" }}
+                        </div>
+                        {% if enrollment.class_schedule.instructor_name %}
+                        <div class="schedule-details">
+                            👤 Instructor: {{ enrollment.class_schedule.instructor_name }}
+                        </div>
+                        {% endif %}
+                        {% if enrollment.class_schedule.is_online and enrollment.class_schedule.meeting_link %}
+                        <div class="schedule-details">
+                            <a href="{{ enrollment.class_schedule.meeting_link }}" target="_blank">🔗 Join Online Class</a>
+                        </div>
+                        {% elif enrollment.class_schedule.room_number %}
+                        <div class="schedule-details">
+                            🏢 Room: {{ enrollment.class_schedule.room_number }}
+                        </div>
+                        {% endif %}
+                    </div>
+                    {% endif %}
+                {% endfor %}
+                
+                {% comment %}Then show schedule preferences from applications for enrollments without assigned schedules{% endcomment %}
+                {% for enrollment in enrollments %}
+                    {% if not enrollment.class_schedule %}
+                        {% for application in enrollment_applications %}
+                            {% if application.language.id == enrollment.course_level.language.id and application.schedule_type %}
+                            <div class="schedule-item">
+                                <div class="schedule-day">
+                                    📅 {{ application.language.name }} - Preferred Schedule
+                                </div>
+                                <div class="schedule-time">
+                                    {% if application.schedule_type == 'weekday' %}
+                                        🕐 Weekday (1 hour per class)
+                                        {% if application.preferred_hour %}
+                                            - Preferred Time: {{ application.preferred_hour }}
+                                        {% endif %}
+                                    {% elif application.schedule_type == 'weekend' %}
+                                        🕐 Weekend (2 hours per class)
+                                    {% endif %}
+                                </div>
+                                <div class="schedule-details" style="color: rgba(255, 255, 255, 0.6); font-size: 12px; margin-top: 8px;">
+                                    ⏳ Waiting for schedule assignment
+                                </div>
+                            </div>
+                            {% endif %}
+                        {% endfor %}
+                    {% endif %}
+                {% endfor %}
+                
+                {% comment %}If no enrollments at all, show all applications with schedule preferences{% endcomment %}
+                {% if not enrollments %}
+                    {% if enrollment_applications %}
+                        {% for application in enrollment_applications %}
+                            {% if application.schedule_type %}
+                            <div class="schedule-item">
+                                <div class="schedule-day">
+                                    📅 {{ application.language.name }} - Preferred Schedule
+                                </div>
+                                <div class="schedule-time">
+                                    {% if application.schedule_type == 'weekday' %}
+                                        🕐 Weekday (1 hour per class)
+                                        {% if application.preferred_hour %}
+                                            - Preferred Time: {{ application.preferred_hour }}
+                                        {% endif %}
+                                    {% elif application.schedule_type == 'weekend' %}
+                                        🕐 Weekend (2 hours per class)
+                                    {% endif %}
+                                </div>
+                                <div class="schedule-details" style="color: rgba(255, 255, 255, 0.6); font-size: 12px; margin-top: 8px;">
+                                    ⏳ Waiting for schedule assignment
+                                </div>
+                            </div>
+                            {% endif %}
+                        {% endfor %}
+                    {% else %}
+                        <div class="empty-state">
+                            <div class="empty-state-icon">📅</div>
+                            <p>No class schedules assigned yet.</p>
+                        </div>
+                    {% endif %}
+                {% endif %}
+            </div>
+
+            <!-- Certificates -->
+            <div class="dashboard-card">
+                <h2 class="card-title">
+                    <div class="card-icon">
+                        <svg viewBox="0 0 24 24" fill="none">
+                            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" stroke="white" stroke-width="2"/>
+                            <path d="M14 2v6h6M16 13H8M16 17H8M10 9H8" stroke="white" stroke-width="2"/>
+                        </svg>
+                    </div>
+                    Certificates
+                </h2>
+                {% if certificates %}
+                    {% for certificate in certificates %}
+                    <div class="certificate-item">
+                        <div class="certificate-number">🎓 Certificate #{{ certificate.certificate_number }}</div>
+                        <div class="certificate-date">Issued: {{ certificate.issued_date|date:"F d, Y" }}</div>
+                        <div style="color: rgba(255, 255, 255, 0.7); font-size: 14px; margin-top: 8px; margin-bottom: 12px;">
+                            {{ certificate.enrollment.course_level.language.flag_emoji|default:"" }} {{ certificate.enrollment.course_level.language.name }} - {{ certificate.enrollment.course_level.get_level_display }}
+                        </div>
+                        {% if certificate.certificate_file %}
+                        <button class="download-link download-certificate-btn" data-certificate-id="{{ certificate.id }}" data-certificate-number="{{ certificate.certificate_number }}">
+                            📥 Download PDF Certificate 
+                            <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                                <path d="M8 12l-4-4h3V4h2v4h3l-4 4z" fill="currentColor"/>
+                            </svg>
+                        </button>
+                        {% else %}
+                        <div style="color: rgba(255, 255, 255, 0.5); font-size: 13px; font-style: italic;">
+                            Certificate PDF is being generated...
+                        </div>
+                        {% endif %}
+                    </div>
+                    {% endfor %}
+                {% else %}
+                    <div class="empty-state">
+                        <div class="empty-state-icon">🎓</div>
+                        <p>No certificates yet. Complete a course and get admin approval to earn your certificate!</p>
+                    </div>
+                {% endif %}
+            </div>
+
+            <!-- Invoices -->
+            <div class="dashboard-card">
+                <h2 class="card-title">
+                    <div class="card-icon">
+                        <svg viewBox="0 0 24 24" fill="none">
+                            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" stroke="white" stroke-width="2"/>
+                            <path d="M14 2v6h6M16 13H8M16 17H8M12 9H8" stroke="white" stroke-width="2"/>
+                        </svg>
+                    </div>
+                    Invoices
+                </h2>
+                {% if invoices %}
+                    {% for invoice in invoices %}
+                    <div class="invoice-item">
+                        <div class="invoice-number">💳 Invoice #{{ invoice.invoice_number }}</div>
+                        <div class="invoice-date">Issued: {{ invoice.issued_date|date:"F d, Y" }}</div>
+                        <div class="invoice-date">Due: {{ invoice.due_date|date:"F d, Y" }}</div>
+                        <div class="invoice-status">
+                            <span class="enrollment-status status-{{ invoice.status }}">{{ invoice.get_status_display }}</span>
+                        </div>
+                        <div class="invoice-amount">₹{{ invoice.total_amount }}</div>
+                        {% if invoice.invoice_file %}
+                        <a href="{{ invoice.invoice_file.url }}" target="_blank" class="download-link">
+                            Download Invoice
+                            <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                                <path d="M8 12l-4-4h3V4h2v4h3l-4 4z" fill="currentColor"/>
+                            </svg>
+                        </a>
+                        {% endif %}
+                    </div>
+                    {% endfor %}
+                {% else %}
+                    <div class="empty-state">
+                        <div class="empty-state-icon">💳</div>
+                        <p>No invoices yet.</p>
+                    </div>
+                {% endif %}
+            </div>
+
+            <!-- Enrollment Applications -->
+            <div class="dashboard-card">
+                <h2 class="card-title">
+                    <div class="card-icon">
+                        <svg viewBox="0 0 24 24" fill="none">
+                            <path d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z" stroke="white" stroke-width="2"/>
+                        </svg>
+                    </div>
+                    Enrollment Applications
+                </h2>
+                {% if enrollment_applications %}
+                    {% for application in enrollment_applications %}
+                    <div class="enrollment-item">
+                        <div class="enrollment-header">
+                            <span class="enrollment-language">
+                                <span class="language-flag">{{ application.language.flag_emoji|default:"🌐" }}</span>
+                                {{ application.language.name }}
+                            </span>
+                            <span class="enrollment-status status-{{ application.status }}">{{ application.get_status_display }}</span>
+                        </div>
+                        
+                        <div style="display: flex; align-items: center; gap: 15px; margin-bottom: 12px;">
+                            {% if application.photo %}
+                                <img src="{{ application.photo.url }}" alt="Student Photo" 
+                                     style="width: 60px; height: 60px; border-radius: 50%; object-fit: cover; border: 2px solid rgba(76, 175, 80, 0.3);">
+                            {% endif %}
+                            <div style="color: rgba(255, 255, 255, 0.8); font-size: 14px;">
+                                <strong>Student:</strong> {{ application.full_name }}
+                            </div>
+                        </div>
+                        
+                        <div style="color: rgba(255, 255, 255, 0.8); font-size: 14px; margin-bottom: 12px;">
+                            <strong>Email:</strong> {{ application.email }} | <strong>Phone:</strong> {{ application.phone_number }}
+                        </div>
+                        
+                        {% if application.address %}
+                        <div style="color: rgba(255, 255, 255, 0.8); font-size: 14px; margin-bottom: 12px;">
+                            <strong>Address:</strong> {{ application.address }}
+                        </div>
+                        {% endif %}
+                        
+                        <div style="color: rgba(255, 255, 255, 0.8); font-size: 14px; margin-bottom: 12px;">
+                            <strong>Levels:</strong> 
+                            {% for level in application.levels.all %}
+                                {{ level.get_level_display }}{% if not forloop.last %}, {% endif %}
+                            {% endfor %}
+                        </div>
+                        
+                        {% if application.schedule_type %}
+                        <div style="color: rgba(255, 255, 255, 0.8); font-size: 14px; margin-bottom: 12px;">
+                            <strong>Schedule:</strong> 
+                            {% if application.schedule_type == 'weekday' %}
+                                <span style="color: #4CAF50;">📅 Weekday (1 hour)</span>
+                                {% if application.preferred_hour %}
+                                    <span style="color: #4CAF50;"> | Preferred Time: {{ application.preferred_hour }}</span>
+                                {% endif %}
+                            {% elif application.schedule_type == 'weekend' %}
+                                <span style="color: #2196F3;">📅 Weekend (2 hours)</span>
+                            {% endif %}
+                        </div>
+                        {% endif %}
+                        
+                        <div style="color: rgba(255, 255, 255, 0.8); font-size: 14px; margin-bottom: 12px;">
+                            <strong>Total Amount:</strong> ₹{{ application.total_amount }}
+                        </div>
+                        
+                        <div style="color: rgba(255, 255, 255, 0.6); font-size: 12px; margin-top: 12px;">
+                            Submitted: {{ application.submitted_at|date:"F d, Y g:i A"|default:application.created_at|date:"F d, Y g:i A" }}
+                        </div>
+                        
+                        {% if application.payment_status %}
+                        <div style="margin-top: 8px;">
+                            <span class="enrollment-status status-{{ application.payment_status }}">
+                                Payment: {{ application.get_payment_status_display }}
+                            </span>
+                        </div>
+                        {% endif %}
+                    </div>
+                    {% endfor %}
+                {% else %}
+                    <div class="empty-state">
+                        <div class="empty-state-icon">📝</div>
+                        <p>No enrollment applications yet. Submit an application to get started!</p>
+                        <a href="{% url 'enrollment-form' %}">Enroll Now 
+                            <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                                <path d="M6 12l4-4-4-4" stroke="currentColor" stroke-width="2"/>
+                            </svg>
+                        </a>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Certificate download handler - Downloads without leaving the page
+        document.addEventListener('DOMContentLoaded', function() {
+            const downloadButtons = document.querySelectorAll('.download-certificate-btn');
+            
+            downloadButtons.forEach(button => {
+                button.addEventListener('click', async function(e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    
+                    const certificateId = this.dataset.certificateId;
+                    const certificateNumber = this.dataset.certificateNumber;
+                    const originalText = this.innerHTML;
+                    
+                    try {
+                        // Show loading state
+                        this.innerHTML = '⏳ Downloading...';
+                        this.disabled = true;
+                        
+                        // Fetch the certificate
+                        const response = await fetch(`/api/courses/certificate/${certificateId}/download/`, {
+                            method: 'GET',
+                            headers: {
+                                'X-Requested-With': 'XMLHttpRequest'
+                            }
+                        });
+                        
+                        if (!response.ok) {
+                            throw new Error('Download failed');
+                        }
+                        
+                        // Get the blob
+                        const blob = await response.blob();
+                        
+                        // Create download link
+                        const url = window.URL.createObjectURL(blob);
+                        const a = document.createElement('a');
+                        a.style.display = 'none';
+                        a.href = url;
+                        a.download = `certificate_${certificateNumber}.pdf`;
+                        
+                        // Trigger download
+                        document.body.appendChild(a);
+                        a.click();
+                        
+                        // Cleanup
+                        window.URL.revokeObjectURL(url);
+                        document.body.removeChild(a);
+                        
+                        // Success state
+                        this.innerHTML = '✅ Downloaded!';
+                        setTimeout(() => {
+                            this.innerHTML = originalText;
+                            this.disabled = false;
+                        }, 2000);
+                        
+                    } catch (error) {
+                        console.error('Download error:', error);
+                        this.innerHTML = '❌ Failed';
+                        setTimeout(() => {
+                            this.innerHTML = originalText;
+                            this.disabled = false;
+                        }, 2000);
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>

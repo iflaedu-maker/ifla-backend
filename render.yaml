@@ -1,0 +1,26 @@
+services:
+  # Web service
+  - type: web
+    name: ifla-backend
+    runtime: python
+    buildCommand: chmod +x build.sh && ./build.sh
+    startCommand: gunicorn ifla_backend.wsgi:application
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.11.7
+      - key: DEBUG
+        value: "False"
+      - key: ENVIRONMENT
+        value: production
+      - key: DISABLE_COLLECTSTATIC
+        value: "0"
+    # Database will be auto-linked if created below
+    plan: free  # or starter for $7/month
+
+databases:
+  # PostgreSQL database
+  - name: ifla-database
+    plan: free  # Free tier: 1GB storage, 90-day retention
+    databaseName: ifla_db
+    user: ifla_user
+

@@ -1,0 +1,318 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Languages & Courses - IFLA</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@100;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+    <link rel="stylesheet" href="{% static 'css/languages.css' %}">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-left">
+            <button class="hamburger-menu">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+            <div class="logo">IFLA</div>
+        </div>
+        <div class="nav-center">
+            <div class="nav-links">
+                <a href="{% url 'index' %}" class="nav-link">Home</a>
+                <a href="{% url 'languages' %}" class="nav-link">Courses / Languages</a>
+                <a href="#" class="nav-link">About Us</a>
+                <a href="{% url 'index' %}#contact" class="nav-link">Contact</a>
+            </div>
+        </div>
+        <div class="nav-right">
+            {% if user.is_authenticated %}
+                <div class="user-profile-menu">
+                    <button class="profile-btn" id="profileBtn">
+                        <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor">
+                            <path d="M16 17v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            <circle cx="10" cy="5" r="4" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                        <span>{{ user.first_name|default:user.email|truncatewords:1 }}</span>
+                        <svg class="dropdown-arrow" width="12" height="12" viewBox="0 0 12 12" fill="none">
+                            <path d="M3 4.5L6 7.5L9 4.5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                    </button>
+                    <div class="profile-dropdown" id="profileDropdown">
+                        <a href="{% url 'dashboard' %}" class="dropdown-item">
+                            <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                                <rect x="2" y="2" width="5" height="5" stroke="currentColor" stroke-width="1.5"/>
+                                <rect x="9" y="2" width="5" height="5" stroke="currentColor" stroke-width="1.5"/>
+                                <rect x="2" y="9" width="5" height="5" stroke="currentColor" stroke-width="1.5"/>
+                                <rect x="9" y="9" width="5" height="5" stroke="currentColor" stroke-width="1.5"/>
+                            </svg>
+                            Dashboard
+                        </a>
+                        <a href="#" class="dropdown-item" id="openEnrollmentModal">
+                            <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                                <path d="M8 2v12M2 8h12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                            </svg>
+                            Enroll in Course
+                        </a>
+                        <div class="dropdown-divider"></div>
+                        <a href="{% url 'logout_redirect' %}" class="dropdown-item logout">
+                            <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                                <path d="M6 14H3a1 1 0 0 1-1-1V3a1 1 0 0 1 1-1h3M11 11l3-3-3-3M14 8H6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                            Logout
+                        </a>
+                    </div>
+                </div>
+            {% else %}
+                <a href="{% url 'auth' %}" class="nav-btn nav-btn-login">Login</a>
+                <a href="{% url 'auth' %}?action=signup" class="nav-btn nav-btn-signup">Sign Up</a>
+            {% endif %}
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="languages-hero">
+        <div class="languages-hero-background"></div>
+        <div class="languages-hero-content">
+            <h1 class="languages-hero-title">
+                <span class="title-line">Explore Our</span>
+                <span class="title-line title-gradient">Language Programs</span>
+            </h1>
+            <p class="languages-hero-subtitle">
+                From beginner to advanced levels, find the perfect course to start your language learning journey
+            </p>
+        </div>
+    </section>
+
+    <!-- Languages Grid Section -->
+    <section class="languages-grid-section">
+        <div class="languages-container">
+            <div class="section-header">
+                <h2 class="section-title">All Languages</h2>
+                <p class="section-subtitle">Select a language to view detailed pricing and course information</p>
+            </div>
+            
+            <!-- Search Bar -->
+            <div class="search-bar-container">
+                <div class="search-bar">
+                    <svg class="search-icon" width="20" height="20" viewBox="0 0 20 20" fill="none">
+                        <path d="M9 17C13.4183 17 17 13.4183 17 9C17 4.58172 13.4183 1 9 1C4.58172 1 1 4.58172 1 9C1 13.4183 4.58172 17 9 17Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        <path d="M19 19L14.65 14.65" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                    <input 
+                        type="text" 
+                        id="languageSearch" 
+                        class="search-input" 
+                        placeholder="Search for a language..."
+                        autocomplete="off"
+                    >
+                    <button class="search-clear" id="clearSearch" style="display: none;">
+                        <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                            <path d="M12 4L4 12M4 4L12 12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                    </button>
+                </div>
+                <div class="search-results-count" id="searchResultsCount"></div>
+            </div>
+            
+            <div class="language-cards">
+                {% for lang_data in languages_data %}
+                    {% with lang=lang_data.language %}
+                    <div class="language-card" data-category="{{ lang.category }}" data-language="{{ lang.name|lower }}">
+                        <div class="language-card-image">
+                            {% if lang.image_url %}
+                                <img src="{{ lang.image_url }}" alt="{{ lang.name }} culture" onerror="this.onerror=null; this.src='{% static 'media/LNGS/' %}{{ lang.name }}.jpg'; this.onerror=null; this.src='https://images.unsplash.com/photo-1528164344705-47542687000d?w=800&h=600&fit=crop';">
+                            {% elif lang.image_file %}
+                                <img src="{{ lang.image_file.url }}" alt="{{ lang.name }} culture" onerror="this.onerror=null; this.src='{% static 'media/LNGS/' %}{{ lang.name }}.jpg';">
+                            {% else %}
+                                {% if lang.name|lower == "chinese" %}
+                                    <img src="https://images.unsplash.com/photo-1547981609-4b6bfe67ca0b?w=800&h=600&fit=crop" alt="{{ lang.name }} culture" onerror="this.onerror=null; this.src='{% static 'media/LNGS/Chinese.jpg' %}';">
+                                {% elif lang.name|lower == "japanese" %}
+                                    <img src="https://images.unsplash.com/photo-1528164344705-47542687000d?w=800&h=600&fit=crop" alt="{{ lang.name }} culture" onerror="this.onerror=null; this.src='{% static 'media/LNGS/Japanese.jpg' %}';">
+                                {% elif lang.name|lower == "hebrew" %}
+                                    <img src="https://images.unsplash.com/photo-1598977123118-4e30ba3c4f5b?w=800&h=600&fit=crop" alt="{{ lang.name }} culture" onerror="this.onerror=null; this.src='{% static 'media/LNGS/Hebrew.jpg' %}';">
+                                {% else %}
+                                    <img src="{% static 'media/LNGS/' %}{{ lang.name }}.jpg" alt="{{ lang.name }} culture" onerror="this.onerror=null; this.src='https://images.unsplash.com/photo-1467269204594-9661b134dd2b?w=800&h=600&fit=crop';">
+                                {% endif %}
+                            {% endif %}
+                            <div class="language-card-overlay"></div>
+                        </div>
+                        <div class="language-card-content">
+                            <div class="language-header">
+                                <span class="language-flag">{{ lang.flag_emoji|default:"🌐" }}</span>
+                                <h4 class="language-name">{{ lang.name }}</h4>
+                            </div>
+                            <p class="language-description">{{ lang.description }}</p>
+                            <div class="language-info">
+                                <span class="info-item">{{ lang_data.levels_count }} Level{{ lang_data.levels_count|pluralize }}</span>
+                                <span class="info-item">{{ lang_data.price_range }}</span>
+                            </div>
+                            <button class="language-btn" data-language-id="{{ lang.id }}" data-language-name="{{ lang.name }}">View Details</button>
+                        </div>
+                    </div>
+                    {% endwith %}
+                {% empty %}
+                    <div style="grid-column: 1 / -1; text-align: center; padding: 60px 20px; color: rgba(255,255,255,0.5);">
+                        <div style="font-size: 48px; margin-bottom: 20px;">📚</div>
+                        <p>No languages available at the moment. Please check back later!</p>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+    </section>
+
+    <!-- Pricing Modal -->
+    <div class="pricing-modal" id="pricingModal">
+        <div class="pricing-modal-overlay"></div>
+        <div class="pricing-modal-content">
+            <button class="modal-close">&times;</button>
+            <div class="modal-header">
+                <span class="modal-flag" id="modalFlag"></span>
+                <h3 class="modal-title" id="modalTitle"></h3>
+            </div>
+            <div class="modal-body">
+                <p class="modal-description" id="modalDescription"></p>
+                <div class="pricing-table">
+                    <h4 class="pricing-table-title">Course Levels & Pricing</h4>
+                    <div class="pricing-levels" id="pricingLevels"></div>
+                </div>
+                <div class="modal-footer">
+                    <p class="pricing-note">* All prices are in INR and subject to applicable taxes</p>
+                    <a href="#" class="modal-cta-btn" id="enrollNowBtn">Enroll Now</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {% csrf_token %}
+    <script src="{% static 'js/languages.js' %}"></script>
+    <script>
+        // Profile dropdown toggle
+        const profileBtn = document.getElementById('profileBtn');
+        const profileDropdown = document.getElementById('profileDropdown');
+        
+        if (profileBtn && profileDropdown) {
+            profileBtn.addEventListener('click', function(e) {
+                e.stopPropagation();
+                profileBtn.classList.toggle('active');
+                profileDropdown.classList.toggle('active');
+            });
+            
+            // Close dropdown when clicking outside
+            document.addEventListener('click', function(e) {
+                if (!profileBtn.contains(e.target) && !profileDropdown.contains(e.target)) {
+                    profileBtn.classList.remove('active');
+                    profileDropdown.classList.remove('active');
+                }
+            });
+            
+            // Close dropdown on ESC key
+            document.addEventListener('keydown', function(e) {
+                if (e.key === 'Escape') {
+                    profileBtn.classList.remove('active');
+                    profileDropdown.classList.remove('active');
+                }
+            });
+        }
+
+        // Enrollment Modal
+        const enrollmentModalOverlay = document.getElementById('enrollmentModalOverlay');
+        const enrollmentModalClose = document.getElementById('enrollmentModalClose');
+        const openEnrollmentModalLink = document.getElementById('openEnrollmentModal');
+        const enrollmentModalBody = document.getElementById('enrollmentModalBody');
+
+        function openEnrollmentModal(languageId = null, languageName = null) {
+            if (enrollmentModalOverlay) {
+                enrollmentModalOverlay.classList.add('active');
+                document.body.style.overflow = 'hidden';
+                
+                // Show loading
+                enrollmentModalBody.innerHTML = '<div class="enrollment-loading">Loading enrollment form...</div>';
+                
+                // Load form content
+                let url = '{% url "enrollment-form" %}?modal=true';
+                if (languageId) {
+                    url += '&language_id=' + languageId;
+                } else if (languageName) {
+                    url += '&language=' + encodeURIComponent(languageName);
+                }
+                
+                fetch(url, {
+                    headers: {
+                        'X-Requested-With': 'XMLHttpRequest'
+                    }
+                })
+                .then(response => response.text())
+                .then(html => {
+                    enrollmentModalBody.innerHTML = html;
+                    // After loading, trigger language selection if it was pre-selected
+                    const languageSelect = document.getElementById('language');
+                    if (languageSelect && languageSelect.value) {
+                        languageSelect.dispatchEvent(new Event('change'));
+                    }
+                })
+                .catch(error => {
+                    enrollmentModalBody.innerHTML = '<div class="enrollment-error-message">Error loading form. Please try again.</div>';
+                    console.error('Error loading enrollment form:', error);
+                });
+            }
+        }
+
+        function closeEnrollmentModal() {
+            if (enrollmentModalOverlay) {
+                enrollmentModalOverlay.classList.remove('active');
+                document.body.style.overflow = '';
+            }
+        }
+
+        if (openEnrollmentModalLink) {
+            openEnrollmentModalLink.addEventListener('click', function(e) {
+                e.preventDefault();
+                openEnrollmentModal();
+            });
+        }
+
+        if (enrollmentModalClose) {
+            enrollmentModalClose.addEventListener('click', closeEnrollmentModal);
+        }
+
+        if (enrollmentModalOverlay) {
+            enrollmentModalOverlay.addEventListener('click', function(e) {
+                if (e.target === enrollmentModalOverlay) {
+                    closeEnrollmentModal();
+                }
+            });
+        }
+
+        // Close modal on ESC key
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape' && enrollmentModalOverlay && enrollmentModalOverlay.classList.contains('active')) {
+                closeEnrollmentModal();
+            }
+        });
+    </script>
+
+    <!-- Enrollment Modal -->
+    <div class="enrollment-modal-overlay" id="enrollmentModalOverlay">
+        <div class="enrollment-modal">
+            <div class="enrollment-modal-header">
+                <h2 class="enrollment-modal-title">Course Enrollment Application</h2>
+                <button class="enrollment-modal-close" id="enrollmentModalClose">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                    </svg>
+                </button>
+            </div>
+            <div class="enrollment-modal-body" id="enrollmentModalBody">
+                <div class="enrollment-loading">Loading enrollment form...</div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
+

@@ -1,0 +1,343 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Application Details - Admin - IFLA</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@100;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+    <style>
+        body {
+            background: #0F0F14;
+            min-height: 100vh;
+            color: #fff;
+            font-family: 'Montserrat', sans-serif;
+        }
+        
+        body::before {
+            content: '';
+            position: fixed;
+            inset: 0;
+            background: radial-gradient(circle at 20% 50%, rgba(88, 86, 214, 0.12) 0%, transparent 50%),
+                        radial-gradient(circle at 80% 80%, rgba(255, 107, 107, 0.08) 0%, transparent 50%),
+                        radial-gradient(circle at 40% 20%, rgba(58, 123, 213, 0.1) 0%, transparent 50%);
+            z-index: 1;
+            pointer-events: none;
+        }
+        
+        .admin-container {
+            position: relative;
+            z-index: 10;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 100px 30px 60px;
+        }
+        
+        .back-link {
+            display: inline-block;
+            margin-bottom: 20px;
+            color: #5856D6;
+            text-decoration: none;
+            font-weight: 600;
+        }
+        
+        .content-card {
+            background: rgba(15, 15, 20, 0.85);
+            backdrop-filter: blur(20px);
+            border-radius: 20px;
+            padding: 40px;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            margin-bottom: 20px;
+        }
+        
+        .content-card h2 {
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 25px;
+            color: #fff;
+            border-bottom: 2px solid rgba(88, 86, 214, 0.3);
+            padding-bottom: 15px;
+        }
+        
+        .detail-row {
+            display: grid;
+            grid-template-columns: 200px 1fr;
+            gap: 15px;
+            padding: 15px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+        
+        .detail-label {
+            color: rgba(255, 255, 255, 0.6);
+            font-weight: 600;
+        }
+        
+        .detail-value {
+            color: rgba(255, 255, 255, 0.9);
+            font-weight: 500;
+        }
+        
+        .status-badge {
+            display: inline-block;
+            padding: 6px 16px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+        
+        .status-approved { background: rgba(76, 175, 80, 0.2); color: #4CAF50; }
+        .status-submitted { background: rgba(33, 150, 243, 0.2); color: #2196F3; }
+        .status-pending { background: rgba(255, 193, 7, 0.2); color: #FFC107; }
+        
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-block;
+            margin-right: 10px;
+            transition: all 0.3s;
+        }
+        
+        .btn-primary {
+            background: #5856D6;
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background: #7B68EE;
+            transform: translateY(-2px);
+        }
+        
+        .btn-success {
+            background: #4CAF50;
+            color: white;
+        }
+        
+        .btn-danger {
+            background: #F44336;
+            color: white;
+        }
+        
+        .level-item {
+            display: inline-block;
+            padding: 8px 16px;
+            background: rgba(88, 86, 214, 0.1);
+            border: 1px solid rgba(88, 86, 214, 0.3);
+            border-radius: 8px;
+            margin: 5px;
+            color: rgba(255, 255, 255, 0.9);
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-left">
+            <div class="logo">IFLA Admin</div>
+        </div>
+        <div class="nav-center">
+            <div class="nav-links">
+                <a href="{% url 'index' %}" class="nav-link">Home</a>
+                <a href="{% url 'admin-dashboard' %}" class="nav-link">Admin Dashboard</a>
+                <a href="/admin/" class="nav-link">Django Admin</a>
+            </div>
+        </div>
+        <div class="nav-right">
+            <a href="{% url 'dashboard' %}" class="nav-btn nav-btn-login">User Dashboard</a>
+            <a href="{% url 'logout_redirect' %}" class="nav-btn nav-btn-signup">Logout</a>
+        </div>
+    </nav>
+
+    <div class="admin-container">
+        <a href="{% url 'admin-applications' %}" class="back-link">← Back to Applications</a>
+
+        <!-- Student Information -->
+        <div class="content-card">
+            <h2>Student Information</h2>
+            {% if application.photo %}
+            <div style="margin-bottom: 30px; text-align: center;">
+                <img src="{{ application.photo.url }}" alt="{{ application.full_name }}" 
+                     style="width: 150px; height: 150px; border-radius: 50%; object-fit: cover; border: 4px solid rgba(88, 86, 214, 0.3); box-shadow: 0 8px 24px rgba(88, 86, 214, 0.2);">
+            </div>
+            {% endif %}
+            <div class="detail-row">
+                <div class="detail-label">Full Name:</div>
+                <div class="detail-value">{{ application.full_name }}</div>
+            </div>
+            <div class="detail-row">
+                <div class="detail-label">Email:</div>
+                <div class="detail-value"><a href="mailto:{{ application.email }}" style="color: #5856D6;">{{ application.email }}</a></div>
+            </div>
+            <div class="detail-row">
+                <div class="detail-label">Phone:</div>
+                <div class="detail-value">{{ application.phone_number }}</div>
+            </div>
+            <div class="detail-row">
+                <div class="detail-label">Date of Birth:</div>
+                <div class="detail-value">{{ application.date_of_birth|date:"F d, Y" }}</div>
+            </div>
+            {% if application.address %}
+            <div class="detail-row">
+                <div class="detail-label">Address:</div>
+                <div class="detail-value">{{ application.address }}</div>
+            </div>
+            {% endif %}
+        </div>
+
+        <!-- Course Details -->
+        <div class="content-card">
+            <h2>Course Details</h2>
+            <div class="detail-row">
+                <div class="detail-label">Language:</div>
+                <div class="detail-value">{{ application.language.flag_emoji }} {{ application.language.name }}</div>
+            </div>
+            <div class="detail-row">
+                <div class="detail-label">Course Levels:</div>
+                <div class="detail-value">
+                    {% for level in levels %}
+                        <span class="level-item">{{ level.get_level_display }}</span>
+                    {% endfor %}
+                </div>
+            </div>
+            <div class="detail-row">
+                <div class="detail-label">Total Amount:</div>
+                <div class="detail-value"><strong>₹{{ application.total_amount }}</strong></div>
+            </div>
+            {% if application.schedule_type %}
+            <div class="detail-row">
+                <div class="detail-label">Schedule Preference:</div>
+                <div class="detail-value">
+                    {% if application.schedule_type == 'weekday' %}
+                        <span style="color: #4CAF50; font-weight: 600;">📅 Weekday (1 hour per class)</span>
+                        {% if application.preferred_hour %}
+                            <br><span style="color: rgba(255,255,255,0.7); margin-top: 5px; display: inline-block;">Preferred Time: {{ application.preferred_hour }}</span>
+                        {% endif %}
+                    {% elif application.schedule_type == 'weekend' %}
+                        <span style="color: #2196F3; font-weight: 600;">📅 Weekend (2 hours per class)</span>
+                    {% endif %}
+                </div>
+            </div>
+            {% endif %}
+        </div>
+
+        <!-- Status & Payment -->
+        <div class="content-card">
+            <h2>Status & Payment</h2>
+            <div class="detail-row">
+                <div class="detail-label">Application Status:</div>
+                <div class="detail-value">
+                    <span class="status-badge status-{{ application.status }}">{{ application.get_status_display }}</span>
+                </div>
+            </div>
+            <div class="detail-row">
+                <div class="detail-label">Payment Status:</div>
+                <div class="detail-value">
+                    <span class="status-badge status-{{ application.payment_status }}">{{ application.get_payment_status_display }}</span>
+                </div>
+            </div>
+            {% if application.payment_reference %}
+            <div class="detail-row">
+                <div class="detail-label">Payment Reference:</div>
+                <div class="detail-value">{{ application.payment_reference }}</div>
+            </div>
+            {% endif %}
+            {% if application.paid_at %}
+            <div class="detail-row">
+                <div class="detail-label">Paid At:</div>
+                <div class="detail-value">{{ application.paid_at|date:"F d, Y g:i A" }}</div>
+            </div>
+            {% endif %}
+            <div class="detail-row">
+                <div class="detail-label">Created:</div>
+                <div class="detail-value">{{ application.created_at|date:"F d, Y g:i A" }}</div>
+            </div>
+            {% if application.submitted_at %}
+            <div class="detail-row">
+                <div class="detail-label">Submitted:</div>
+                <div class="detail-value">{{ application.submitted_at|date:"F d, Y g:i A" }}</div>
+            </div>
+            {% endif %}
+        </div>
+
+        <!-- Documents -->
+        <div class="content-card">
+            <h2>Documents</h2>
+            {% if application.photo %}
+            <div class="detail-row">
+                <div class="detail-label">Student Photo:</div>
+                <div class="detail-value">
+                    <a href="{{ application.photo.url }}" target="_blank" class="btn btn-primary">View Photo</a>
+                    <img src="{{ application.photo.url }}" alt="{{ application.full_name }}" 
+                         style="width: 100px; height: 100px; border-radius: 8px; object-fit: cover; border: 2px solid rgba(88, 86, 214, 0.3); margin-left: 15px; vertical-align: middle;">
+                </div>
+            </div>
+            {% endif %}
+            {% if application.verification_document %}
+            <div class="detail-row">
+                <div class="detail-label">Verification Document:</div>
+                <div class="detail-value">
+                    <a href="{{ application.verification_document.url }}" target="_blank" class="btn btn-primary">View Document</a>
+                </div>
+            </div>
+            {% endif %}
+            {% if application.signature %}
+            <div class="detail-row">
+                <div class="detail-label">Signature:</div>
+                <div class="detail-value">
+                    <a href="{{ application.signature.url }}" target="_blank" class="btn btn-primary">View Signature</a>
+                </div>
+            </div>
+            {% endif %}
+        </div>
+
+        <!-- Actions -->
+        <div class="content-card">
+            <h2>Actions</h2>
+            <form id="statusForm" method="POST" action="{% url 'admin-update-application-status' application.id %}">
+                {% csrf_token %}
+                <select name="status" id="statusSelect" style="padding: 10px 15px; background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.15); border-radius: 8px; color: #fff; margin-right: 10px;">
+                    <option value="draft" {% if application.status == 'draft' %}selected{% endif %} style="background: #1a1a24; color: #fff;">Draft</option>
+                    <option value="submitted" {% if application.status == 'submitted' %}selected{% endif %} style="background: #1a1a24; color: #fff;">Submitted</option>
+                    <option value="payment_pending" {% if application.status == 'payment_pending' %}selected{% endif %} style="background: #1a1a24; color: #fff;">Payment Pending</option>
+                    <option value="approved" {% if application.status == 'approved' %}selected{% endif %} style="background: #1a1a24; color: #fff;">Approved</option>
+                    <option value="rejected" {% if application.status == 'rejected' %}selected{% endif %} style="background: #1a1a24; color: #fff;">Rejected</option>
+                </select>
+                <button type="submit" class="btn btn-primary">Update Status</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('statusForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const formData = new FormData(this);
+            fetch(this.action, {
+                method: 'POST',
+                body: formData,
+                headers: {
+                    'X-CSRFToken': formData.get('csrfmiddlewaretoken')
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    alert('Status updated successfully!');
+                    location.reload();
+                } else {
+                    alert('Error updating status: ' + (data.error || 'Unknown error'));
+                }
+            })
+            .catch(error => {
+                alert('Error: ' + error);
+            });
+        });
+    </script>
+</body>
+</html>
+
