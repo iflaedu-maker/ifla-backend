@@ -6,7 +6,10 @@ __pycache__/
 local_settings.py
 db.sqlite3
 db.sqlite3-journal
-media/
+# Media files (user uploads) - but allow static/media/ for static assets
+/media/
+# But allow static media files (videos, images)
+!static/media/
 staticfiles/
 
 # Environment variables
