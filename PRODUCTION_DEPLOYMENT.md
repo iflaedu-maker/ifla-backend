@@ -89,8 +89,14 @@ Replace `YOUR_USERNAME` with your GitHub username.
    - **Database**: `ifla_db`
    - **User**: `ifla_user`
    - **Plan**: **Free** (1GB storage, 90-day retention)
-   - **Region**: Choose closest to you
+   - **Region**: **Choose based on your audience:**
+     - 🇮🇳 **For Indian audience**: Choose **"Mumbai (India)"** or **"Singapore"** (closest to India, better latency)
+     - 🇺🇸 **For US audience**: Choose **"Oregon (US West)"** or **"Ohio (US East)"**
+     - 🇪🇺 **For European audience**: Choose **"Frankfurt (EU)"**
+     - 🌍 **Global/Mixed**: Choose **"Singapore"** (good middle ground)
 4. Click **"Create Database"**
+
+**💡 Tip**: Choose **Singapore** or **Mumbai** for best performance for Indian users!
 
 ### 4.2 Save Database Connection String
 
@@ -117,7 +123,9 @@ Replace `YOUR_USERNAME` with your GitHub username.
    - **Branch**: `main`
    - **Root Directory**: (leave empty - root is fine)
    - **Environment**: `Python 3`
-   - **Build Command**: `chmod +x build.sh && ./build.sh`
+   - **Build Command**: `bash build.sh`
+     - **OR** if that doesn't work: `chmod +x build.sh && ./build.sh`
+     - **IMPORTANT**: Do NOT include backticks (`) around the command - just paste it as shown
    - **Start Command**: `gunicorn ifla_backend.wsgi:application`
    - **Plan**: **Free** (or Starter for $7/month with more resources)
 

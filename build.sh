@@ -12,8 +12,12 @@ pip install -r requirements.txt
 # Collect static files
 python manage.py collectstatic --noinput || true
 
-# Run migrations
-python manage.py migrate --noinput
+# Run migrations (skip if DATABASE_URL not set during build)
+if [ -n "$DATABASE_URL" ]; then
+    python manage.py migrate --noinput
+else
+    echo "DATABASE_URL not set, skipping migrations (will run on first start)"
+fi
 
 echo "Build completed successfully!"
 

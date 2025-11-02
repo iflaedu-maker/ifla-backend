@@ -3,7 +3,7 @@ services:
   - type: web
     name: ifla-backend
     runtime: python
-    buildCommand: chmod +x build.sh && ./build.sh
+    buildCommand: bash build.sh
     startCommand: gunicorn ifla_backend.wsgi:application
     envVars:
       - key: PYTHON_VERSION

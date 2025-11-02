@@ -30,7 +30,7 @@
    - Click "New +" → Web Service
    - Connect your GitHub repo
    - Settings:
-     - Build Command: `chmod +x build.sh && ./build.sh`
+     - Build Command: `bash build.sh` (NO backticks in Render UI)
      - Start Command: `gunicorn ifla_backend.wsgi:application`
      - Plan: Free
 
