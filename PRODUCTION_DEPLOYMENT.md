@@ -123,6 +123,7 @@ Replace `YOUR_USERNAME` with your GitHub username.
    - **Branch**: `main`
    - **Root Directory**: (leave empty - root is fine)
    - **Environment**: `Python 3`
+   - **Python Version**: `3.11.7` (important - set this explicitly)
    - **Build Command**: `bash build.sh`
      - **OR** if that doesn't work: `chmod +x build.sh && ./build.sh`
      - **IMPORTANT**: Do NOT include backticks (`) around the command - just paste it as shown
