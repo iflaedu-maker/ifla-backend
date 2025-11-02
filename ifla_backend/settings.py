@@ -29,7 +29,23 @@ ALLOWED_HOSTS = [host.strip() for host in allowed_hosts_str.split(',') if host.s
 
 # For Render health checks, also allow the service hostname if available
 if os.getenv('RENDER_EXTERNAL_HOSTNAME'):
-    ALLOWED_HOSTS.append(os.getenv('RENDER_EXTERNAL_HOSTNAME'))
+    render_host = os.getenv('RENDER_EXTERNAL_HOSTNAME')
+    if render_host not in ALLOWED_HOSTS:
+        ALLOWED_HOSTS.append(render_host)
+
+# Also check for RENDER_SERVICE_HOST (another Render env var)
+if os.getenv('RENDER_SERVICE_HOST'):
+    render_service_host = os.getenv('RENDER_SERVICE_HOST')
+    if render_service_host not in ALLOWED_HOSTS:
+        ALLOWED_HOSTS.append(render_service_host)
+
+# If DEBUG is False but ALLOWED_HOSTS is empty or only has localhost, add common Render patterns
+if not DEBUG and len(ALLOWED_HOSTS) == 1 and 'localhost' in ALLOWED_HOSTS[0]:
+    # Allow all .onrender.com domains as fallback
+    ALLOWED_HOSTS.append('*.onrender.com')
+    # Also allow empty (not recommended but helps debug)
+    if not os.getenv('ALLOWED_HOSTS'):
+        ALLOWED_HOSTS = ['*']  # Temporary - allows any host
 
 
 # Application definition
@@ -260,6 +276,10 @@ if not DEBUG:
     SECURE_CONTENT_TYPE_NOSNIFF = True
     SECURE_BROWSER_XSS_FILTER = True
     X_FRAME_OPTIONS = 'DENY'
+else:
+    # In development, allow all hosts
+    if '*' not in ALLOWED_HOSTS:
+        ALLOWED_HOSTS = ['*']
 
 # Razorpay Payment Gateway Configuration
 # Get your keys from: https://dashboard.razorpay.com/app/keys
