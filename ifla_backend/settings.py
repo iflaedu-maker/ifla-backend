@@ -102,19 +102,31 @@ WSGI_APPLICATION = 'ifla_backend.wsgi.application'
 
 # Use PostgreSQL in production (Render provides DATABASE_URL)
 # Use SQLite in development
-if os.getenv('DATABASE_URL'):
+database_url = os.getenv('DATABASE_URL')
+
+if database_url:
     # Production: PostgreSQL
     try:
         import dj_database_url
         DATABASES = {
             'default': dj_database_url.config(
-                default=os.getenv('DATABASE_URL'),
+                default=database_url,
                 conn_max_age=600,
                 conn_health_checks=True,
             )
         }
     except ImportError:
         # Fallback if dj_database_url not installed
+        DATABASES = {
+            'default': {
+                'ENGINE': 'django.db.backends.sqlite3',
+                'NAME': BASE_DIR / 'db.sqlite3',
+            }
+        }
+    except Exception as e:
+        # Log database config error but don't crash
+        print(f"Database configuration error: {e}")
+        # Fallback to SQLite
         DATABASES = {
             'default': {
                 'ENGINE': 'django.db.backends.sqlite3',
