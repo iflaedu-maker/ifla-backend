@@ -192,7 +192,13 @@ MEDIA_ROOT = BASE_DIR / 'media'
 
 # WhiteNoise for serving static files in production
 if not DEBUG:
+    # Use CompressedManifestStaticFilesStorage for better performance
+    # This includes videos and all static assets
     STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+    
+    # WhiteNoise configuration for better video serving
+    WHITENOISE_MAX_AGE = 31536000  # 1 year cache for static files
+    WHITENOISE_USE_FINDERS = True  # Help WhiteNoise find static files
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
