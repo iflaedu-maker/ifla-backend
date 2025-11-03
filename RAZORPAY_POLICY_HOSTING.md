@@ -29,7 +29,7 @@ Razorpay provides a wizard to create and host mandatory policies. You can point 
   - Metro delivery: 2–5 business days
   - Non-metro delivery: 3–7 business days
   - Remote: 5–10 business days
-- **Contact:** +91 80 1234 5678 • support@ifla.in • IFLA Education Pvt. Ltd., 2nd Floor, Indiranagar 100 Ft Rd, Bengaluru 560038
+- **Contact:** +91 8660846165 • support@ifla.in • IFLA Education Pvt. Ltd., 7th Main Rd, PNS Layout, Subbayianiah Palyam, Kalyan Nagar, Bengaluru, Karnataka 560043
 
 ## Using Hosted URLs in Checkout
 If you render Razorpay Checkout via JS, include policy links in your UI, or embed them into your site footer.
