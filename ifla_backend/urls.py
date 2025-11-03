@@ -23,6 +23,13 @@ urlpatterns = [
     path('dashboard/', dashboard, name='dashboard'),
     path('enrollment/', enrollment_form, name='enrollment-form'),
     path('payment/', payment_portal, name='payment-portal'),
+
+    # Policy pages
+    path('terms/', TemplateView.as_view(template_name='terms.html'), name='terms'),
+    path('privacy/', TemplateView.as_view(template_name='privacy.html'), name='privacy'),
+    path('refunds/', TemplateView.as_view(template_name='refund.html'), name='refunds'),
+    path('shipping/', TemplateView.as_view(template_name='shipping.html'), name='shipping'),
+    path('contact-us/', TemplateView.as_view(template_name='contact_policy.html'), name='contact-policy'),
     
     # Admin UI routes (accessible at /api/courses/admin/*)
     # Django admin is at /admin/
