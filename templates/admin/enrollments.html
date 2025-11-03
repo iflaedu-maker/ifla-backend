@@ -478,7 +478,7 @@
                                 <span style="color: #4CAF50;">📅 {{ enrollment.class_schedule.get_day_of_week_display }}</span><br>
                                 <small style="color: rgba(255,255,255,0.6);">{{ enrollment.class_schedule.start_time|time:"g:i A" }} - {{ enrollment.class_schedule.end_time|time:"g:i A" }}</small>
                             {% else %}
-                                {% for app in enrollment.user.enrollment_applications.all %}
+                                {% for app in enrollment.user.enrollment_applications.all|slice:":1" %}
                                     {% if app.schedule_type %}
                                         {% if app.schedule_type == 'weekday' %}
                                             <span style="color: #4CAF50; font-size: 12px;">📅 Weekday (1h)</span>
@@ -486,7 +486,8 @@
                                         {% else %}
                                             <span style="color: #2196F3; font-size: 12px;">📅 Weekend (2h)</span>
                                         {% endif %}
-                                        {% break %}
+                                    {% else %}
+                                        <span style="color: rgba(255,255,255,0.4); font-size: 12px;">Not assigned</span>
                                     {% endif %}
                                 {% empty %}
                                     <span style="color: rgba(255,255,255,0.4); font-size: 12px;">Not assigned</span>

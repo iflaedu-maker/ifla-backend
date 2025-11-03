@@ -6,12 +6,17 @@ from reportlab.lib.enums import TA_CENTER
 from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer
 from django.conf import settings
 from io import BytesIO
+from reportlab.pdfgen import canvas as rl_canvas
+from PyPDF2 import PdfReader, PdfWriter
 import os
 from datetime import datetime
 
 
 def generate_certificate_pdf(certificate):
-    """Generate a PDF certificate for the student"""
+    """Generate a PDF certificate for the student.
+    If a template file named 'PDF.pdf' exists at project root, overlay dynamic fields on it.
+    Otherwise, fall back to the styled ReportLab document.
+    """
     enrollment = certificate.enrollment
     user = enrollment.user
     course_level = enrollment.course_level
@@ -20,15 +25,74 @@ def generate_certificate_pdf(certificate):
     # Get student name
     student_name = f"{user.first_name} {user.last_name}".strip() or user.email
     
-    # Create buffer for PDF
+    # Output filename and path
+    filename = f"certificate_{certificate.certificate_number}_{user.id}.pdf"
+    file_path = os.path.join(settings.MEDIA_ROOT, 'certificates', filename)
+    os.makedirs(os.path.dirname(file_path), exist_ok=True)
+
+    # If template exists, overlay text on it
+    template_path = os.path.join(settings.BASE_DIR, 'PDF.pdf')
+    if os.path.exists(template_path):
+        # Read template to get page size
+        reader = PdfReader(template_path)
+        first_page = reader.pages[0]
+        media_box = first_page.mediabox
+        page_width = float(media_box.width)
+        page_height = float(media_box.height)
+
+        # Create overlay PDF in memory
+        overlay_buffer = BytesIO()
+        c = rl_canvas.Canvas(overlay_buffer, pagesize=(page_width, page_height))
+
+        # Text values
+        language_display = f"{language.flag_emoji if language.flag_emoji else ''} {language.name}"
+        level_display = course_level.get_level_display()
+        date_str = certificate.issued_date.strftime("%B %d, %Y")
+
+        # Choose positions (tweak as needed to fit your template)
+        # Coordinates origin is bottom-left. Adjust X/Y to align with your design.
+        name_x, name_y = page_width * 0.50, page_height * 0.58
+        lang_x, lang_y = page_width * 0.50, page_height * 0.50
+        level_x, level_y = page_width * 0.50, page_height * 0.44
+        date_x, date_y = page_width * 0.77, page_height * 0.18
+
+        # Draw centered strings
+        c.setFillColorRGB(0.10, 0.10, 0.10)
+        c.setFont("Helvetica-Bold", 28)
+        c.drawCentredString(name_x, name_y, student_name)
+
+        c.setFont("Helvetica", 16)
+        c.drawCentredString(lang_x, lang_y, language_display)
+
+        c.setFont("Helvetica-Bold", 18)
+        c.drawCentredString(level_x, level_y, level_display)
+
+        c.setFont("Helvetica", 12)
+        c.drawCentredString(date_x, date_y, date_str)
+
+        c.showPage()
+        c.save()
+
+        # Merge overlay onto template
+        overlay_buffer.seek(0)
+        overlay_pdf = PdfReader(overlay_buffer)
+        overlay_page = overlay_pdf.pages[0]
+
+        writer = PdfWriter()
+        base_page = reader.pages[0]
+        base_page.merge_page(overlay_page)
+        writer.add_page(base_page)
+
+        with open(file_path, 'wb') as out_f:
+            writer.write(out_f)
+
+        return f'certificates/{filename}'
+
+    # Fallback: build a styled certificate without background
     buffer = BytesIO()
-    
-    # Create the PDF object
     pdf_file = SimpleDocTemplate(buffer, pagesize=A4,
                                 rightMargin=72, leftMargin=72,
                                 topMargin=72, bottomMargin=18)
-    
-    # Container for the 'Flowable' objects
     elements = []
     
     # Define custom styles
@@ -128,13 +192,6 @@ def generate_certificate_pdf(certificate):
     # Get PDF bytes
     pdf_bytes = buffer.getvalue()
     buffer.close()
-    
-    # Save to file
-    filename = f"certificate_{certificate.certificate_number}_{user.id}.pdf"
-    file_path = os.path.join(settings.MEDIA_ROOT, 'certificates', filename)
-    
-    # Ensure directory exists
-    os.makedirs(os.path.dirname(file_path), exist_ok=True)
     
     # Write PDF bytes to file
     with open(file_path, 'wb') as f:
