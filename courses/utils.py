@@ -68,8 +68,8 @@ def generate_certificate_pdf(certificate):
         # Choose positions (adjusted to match provided mockup)
         # Origin is bottom-left; tweak percentages as needed after preview.
         name_x, name_y = page_width * 0.50, page_height * 0.565   # slightly lower than before
-        langlevel_x, langlevel_y = page_width * 0.45, page_height * 0.400  # one centered line
-        date_x, date_y = page_width * 0.48, page_height * 0.350  # bottom-right label area
+        langlevel_x, langlevel_y = page_width * 0.45 - 4, page_height * 0.400  # one centered line, moved 4px left
+        date_x, date_y = page_width * 0.48 - 8, page_height * 0.350  # bottom-right label area, moved 8px left
 
         # Draw centered strings
         c.setFillColorRGB(0.10, 0.10, 0.10)
