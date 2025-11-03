@@ -2232,6 +2232,23 @@ select:focus {
     .nav-links {
         display: none;
     }
+    .nav-links.open {
+        display: flex;
+        position: fixed;
+        top: 0;
+        right: 0;
+        height: 100vh;
+        width: 75%;
+        max-width: 340px;
+        background: rgba(15,15,20,0.98);
+        backdrop-filter: blur(12px);
+        box-shadow: -12px 0 40px rgba(0,0,0,0.4);
+        padding: 80px 24px 24px;
+        flex-direction: column;
+        gap: 16px;
+        z-index: 1001;
+        border-left: 1px solid rgba(255,255,255,0.08);
+    }
     
     .nav-right {
         gap: 12px;

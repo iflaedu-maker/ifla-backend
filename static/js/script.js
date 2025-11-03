@@ -79,6 +79,31 @@ document.addEventListener('DOMContentLoaded', () => {
         fadeObserver.observe(statsTitle);
     }
     
+    // Mobile nav: hamburger toggle
+    const hamburger = document.querySelector('.hamburger-menu');
+    const navLinks = document.querySelector('.nav-links');
+    if (hamburger && navLinks) {
+        const toggleMenu = () => {
+            const isOpen = navLinks.classList.toggle('open');
+            hamburger.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+            document.documentElement.style.overflow = isOpen ? 'hidden' : '';
+            document.body.style.overflow = isOpen ? 'hidden' : '';
+        };
+        hamburger.addEventListener('click', (e) => {
+            e.stopPropagation();
+            toggleMenu();
+        });
+        document.addEventListener('click', (e) => {
+            if (!navLinks.classList.contains('open')) return;
+            if (navLinks.contains(e.target)) return;
+            if (hamburger.contains(e.target)) return;
+            navLinks.classList.remove('open');
+            hamburger.setAttribute('aria-expanded', 'false');
+            document.documentElement.style.overflow = '';
+            document.body.style.overflow = '';
+        });
+    }
+    
     if (statsSubtitle) {
         statsSubtitle.style.opacity = '0';
         statsSubtitle.style.transform = 'translateY(20px)';
