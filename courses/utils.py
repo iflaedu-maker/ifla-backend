@@ -7,6 +7,8 @@ from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer
 from django.conf import settings
 from io import BytesIO
 from reportlab.pdfgen import canvas as rl_canvas
+from reportlab.pdfbase import pdfmetrics
+from reportlab.pdfbase.ttfonts import TTFont
 from PyPDF2 import PdfReader, PdfWriter
 import os
 from datetime import datetime
@@ -44,30 +46,50 @@ def generate_certificate_pdf(certificate):
         overlay_buffer = BytesIO()
         c = rl_canvas.Canvas(overlay_buffer, pagesize=(page_width, page_height))
 
+        # Try to register Montserrat fonts if present
+        try:
+            fonts_base = os.path.join(settings.BASE_DIR, 'static', 'fonts')
+            montserrat_regular = os.path.join(fonts_base, 'Montserrat-Regular.ttf')
+            montserrat_bold = os.path.join(fonts_base, 'Montserrat-Bold.ttf')
+            if os.path.exists(montserrat_regular):
+                pdfmetrics.registerFont(TTFont('Montserrat', montserrat_regular))
+            if os.path.exists(montserrat_bold):
+                pdfmetrics.registerFont(TTFont('Montserrat-Bold', montserrat_bold))
+        except Exception:
+            # Ignore font registration errors and fallback to Helvetica
+            pass
+
         # Text values
         language_display = f"{language.flag_emoji if language.flag_emoji else ''} {language.name}"
         level_display = course_level.get_level_display()
+        lang_level_line = f"{language_display}  •  {level_display}"
         date_str = certificate.issued_date.strftime("%B %d, %Y")
 
-        # Choose positions (tweak as needed to fit your template)
-        # Coordinates origin is bottom-left. Adjust X/Y to align with your design.
-        name_x, name_y = page_width * 0.50, page_height * 0.58
-        lang_x, lang_y = page_width * 0.50, page_height * 0.50
-        level_x, level_y = page_width * 0.50, page_height * 0.44
-        date_x, date_y = page_width * 0.77, page_height * 0.18
+        # Choose positions (adjusted to match provided mockup)
+        # Origin is bottom-left; tweak percentages as needed after preview.
+        name_x, name_y = page_width * 0.50, page_height * 0.545   # slightly lower than before
+        langlevel_x, langlevel_y = page_width * 0.50, page_height * 0.415  # one centered line
+        date_x, date_y = page_width * 0.83, page_height * 0.108   # bottom-right label area
 
         # Draw centered strings
         c.setFillColorRGB(0.10, 0.10, 0.10)
-        c.setFont("Helvetica-Bold", 28)
+        # Pick Montserrat if registered, else Helvetica
+        try:
+            c.setFont("Montserrat-Bold", 28)
+        except Exception:
+            c.setFont("Helvetica-Bold", 28)
         c.drawCentredString(name_x, name_y, student_name)
 
-        c.setFont("Helvetica", 16)
-        c.drawCentredString(lang_x, lang_y, language_display)
+        try:
+            c.setFont("Montserrat", 16)
+        except Exception:
+            c.setFont("Helvetica", 16)
+        c.drawCentredString(langlevel_x, langlevel_y, lang_level_line)
 
-        c.setFont("Helvetica-Bold", 18)
-        c.drawCentredString(level_x, level_y, level_display)
-
-        c.setFont("Helvetica", 12)
+        try:
+            c.setFont("Montserrat", 12)
+        except Exception:
+            c.setFont("Helvetica", 12)
         c.drawCentredString(date_x, date_y, date_str)
 
         c.showPage()
