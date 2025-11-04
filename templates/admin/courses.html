@@ -729,7 +729,7 @@
                 <h2 id="languageModalTitle">Add Language</h2>
                 <button class="modal-close" onclick="closeLanguageModal()">&times;</button>
             </div>
-            <form id="languageForm" method="POST">
+            <form id="languageForm" method="POST" enctype="multipart/form-data">
                 {% csrf_token %}
                 <input type="hidden" name="language_id" id="languageId">
                 <div class="form-group">
@@ -752,8 +752,18 @@
                     </select>
                 </div>
                 <div class="form-group">
+                    <label>Image File</label>
+                    <input type="file" name="image_file" id="languageImageFile" accept="image/*">
+                    <small style="display: block; margin-top: 5px; color: #666;">Upload an image file for this language</small>
+                    <div id="currentImagePreview" style="margin-top: 10px; display: none;">
+                        <img id="currentImageImg" src="" alt="Current image" style="max-width: 200px; max-height: 150px; border-radius: 4px;">
+                        <p style="margin-top: 5px; font-size: 12px; color: #666;">Current image (upload new file to replace)</p>
+                    </div>
+                </div>
+                <div class="form-group">
                     <label>Image URL</label>
                     <input type="url" name="image_url" id="languageImageUrl" placeholder="https://...">
+                    <small style="display: block; margin-top: 5px; color: #666;">Or provide an image URL instead of uploading a file</small>
                 </div>
                 <div class="form-actions">
                     <button type="button" class="btn-secondary" onclick="closeLanguageModal()">Cancel</button>
@@ -835,6 +845,24 @@
                         document.getElementById('languageDescription').value = data.description || '';
                         document.getElementById('languageCategory').value = data.category;
                         document.getElementById('languageImageUrl').value = data.image_url || '';
+                        
+                        // Handle image_file preview
+                        const imagePreview = document.getElementById('currentImagePreview');
+                        const imageImg = document.getElementById('currentImageImg');
+                        const imageFileInput = document.getElementById('languageImageFile');
+                        
+                        if (data.image_file) {
+                            imageImg.src = data.image_file;
+                            imagePreview.style.display = 'block';
+                        } else {
+                            imagePreview.style.display = 'none';
+                        }
+                        
+                        // Clear file input when editing
+                        if (imageFileInput) {
+                            imageFileInput.value = '';
+                        }
+                        
                         title.textContent = 'Edit Language';
                         form.action = '{% url "admin-update-language" 999 %}'.replace('999', languageId);
                     })
@@ -846,6 +874,8 @@
                 // Add mode
                 form.reset();
                 document.getElementById('languageId').value = '';
+                document.getElementById('currentImagePreview').style.display = 'none';
+                document.getElementById('currentImageImg').src = '';
                 title.textContent = 'Add Language';
                 form.action = '{% url "admin-add-language" %}';
             }

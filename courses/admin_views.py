@@ -676,6 +676,7 @@ def admin_add_language(request):
             description = request.POST.get('description', '').strip()
             category = int(request.POST.get('category', 1))
             image_url = request.POST.get('image_url', '').strip()
+            image_file = request.FILES.get('image_file')
             
             if not name or not description:
                 messages.error(request, 'Name and description are required')
@@ -692,6 +693,11 @@ def admin_add_language(request):
                 category=category,
                 image_url=image_url if image_url else ''
             )
+            
+            # Handle image file upload
+            if image_file:
+                language.image_file = image_file
+                language.save()
             
             messages.success(request, f'Language "{name}" added successfully!')
         except Exception as e:
@@ -711,6 +717,7 @@ def admin_update_language(request, language_id):
             description = request.POST.get('description', '').strip()
             category = int(request.POST.get('category', 1))
             image_url = request.POST.get('image_url', '').strip()
+            image_file = request.FILES.get('image_file')
             
             if not name or not description:
                 messages.error(request, 'Name and description are required')
@@ -726,6 +733,11 @@ def admin_update_language(request, language_id):
             language.description = description
             language.category = category
             language.image_url = image_url if image_url else ''
+            
+            # Handle image file upload - only update if a new file is provided
+            if image_file:
+                language.image_file = image_file
+            
             language.save()
             
             messages.success(request, f'Language "{name}" updated successfully!')
@@ -842,7 +854,15 @@ def admin_get_language(request, language_id):
     from .serializers import LanguageSerializer
     language = get_object_or_404(Language, id=language_id)
     serializer = LanguageSerializer(language)
-    return JsonResponse(serializer.data)
+    data = serializer.data
+    
+    # Convert image_file to URL if it exists
+    if language.image_file:
+        data['image_file'] = request.build_absolute_uri(language.image_file.url)
+    else:
+        data['image_file'] = None
+    
+    return JsonResponse(data)
 
 
 @user_passes_test(is_staff, login_url='/auth/')
