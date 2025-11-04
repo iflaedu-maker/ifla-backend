@@ -914,12 +914,57 @@
                         console.error(err);
                     });
             } else {
-                // Add mode
-                form.reset();
-                document.getElementById('levelId').value = '';
-                document.getElementById('levelLanguageId').value = languageId;
-                title.textContent = 'Add Course Level';
-                form.action = '{% url "admin-add-level" %}';
+                // Add mode - fetch language to get category for auto-pricing
+                fetch(`{% url "admin-get-language" 999 %}`.replace('999', languageId))
+                    .then(r => r.json())
+                    .then(langData => {
+                        form.reset();
+                        document.getElementById('levelId').value = '';
+                        document.getElementById('levelLanguageId').value = languageId;
+                        title.textContent = 'Add Course Level';
+                        form.action = '{% url "admin-add-level" %}';
+                        
+                        // Store language category for auto-pricing
+                        const levelPriceInput = document.getElementById('levelPrice');
+                        const levelSelect = document.getElementById('levelLevel');
+                        
+                        // Pricing based on category
+                        const categoryPricing = {
+                            1: { // Category 1
+                                'A1': 16000, 'A2': 18000, 'B1': 20000,
+                                'B2': 22000, 'C1': 24000, 'C2': 26000
+                            },
+                            2: { // Category 2
+                                'A1': 14000, 'A2': 16000, 'B1': 18000,
+                                'B2': 20000, 'C1': 22000, 'C2': 24000
+                            }
+                        };
+                        
+                        // Auto-fill price when level is selected
+                        // Use a one-time event listener that can be removed
+                        const handleLevelChange = function() {
+                            const selectedLevel = this.value;
+                            if (selectedLevel && langData.category) {
+                                const price = categoryPricing[langData.category]?.[selectedLevel];
+                                if (price) {
+                                    levelPriceInput.value = price;
+                                }
+                            }
+                        };
+                        
+                        // Remove old listener if exists and add new one
+                        levelSelect.removeEventListener('change', handleLevelChange);
+                        levelSelect.addEventListener('change', handleLevelChange);
+                    })
+                    .catch(err => {
+                        console.error('Error loading language data:', err);
+                        // Fallback if fetch fails
+                        form.reset();
+                        document.getElementById('levelId').value = '';
+                        document.getElementById('levelLanguageId').value = languageId;
+                        title.textContent = 'Add Course Level';
+                        form.action = '{% url "admin-add-level" %}';
+                    });
             }
             
             modal.classList.add('active');

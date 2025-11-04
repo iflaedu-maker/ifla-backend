@@ -12,6 +12,23 @@
     <link rel="stylesheet" href="{% static 'css/languages.css' %}">
 </head>
 <body>
+    <!-- Loading Screen -->
+    <div class="loading-screen" id="loadingScreen">
+        <div class="loading-content">
+            <div class="loading-logo">IFLA</div>
+            <div class="loading-spinner"></div>
+            <div class="loading-dots">
+                <div class="loading-dot"></div>
+                <div class="loading-dot"></div>
+                <div class="loading-dot"></div>
+            </div>
+            <div class="loading-text">Loading amazing courses...</div>
+            <div class="loading-progress">
+                <div class="loading-progress-bar"></div>
+            </div>
+        </div>
+    </div>
+
     <!-- Navigation -->
     <nav class="navbar">
         <div class="nav-left">
@@ -190,8 +207,179 @@
     </div>
 
     {% csrf_token %}
+    <script>
+        // Hide loading screen when page is fully loaded
+        window.addEventListener('load', function() {
+            const loadingScreen = document.getElementById('loadingScreen');
+            if (loadingScreen) {
+                // Add fade out class
+                loadingScreen.classList.add('fade-out');
+                // Remove from DOM after animation
+                setTimeout(function() {
+                    loadingScreen.classList.add('hidden');
+                    // Remove after a bit more time to ensure smooth transition
+                    setTimeout(function() {
+                        loadingScreen.style.display = 'none';
+                    }, 600);
+                }, 600);
+            }
+        });
+
+        // Fallback: Hide loading screen after max 3 seconds even if page hasn't fully loaded
+        setTimeout(function() {
+            const loadingScreen = document.getElementById('loadingScreen');
+            if (loadingScreen && !loadingScreen.classList.contains('hidden')) {
+                loadingScreen.classList.add('fade-out');
+                setTimeout(function() {
+                    loadingScreen.classList.add('hidden');
+                    loadingScreen.style.display = 'none';
+                }, 600);
+            }
+        }, 3000);
+    </script>
+    <script>
+        // Database language data - will override static languageData
+        const databaseLanguageData = {
+            {% for lang in languages %}
+            "{{ lang.id }}": {
+                id: {{ lang.id }},
+                name: "{{ lang.name }}",
+                flag: "{{ lang.flag_emoji|default:'🌐' }}",
+                category: {{ lang.category }},
+                description: "{{ lang.description|escapejs }}",
+                pricing: [
+                    {% for level in lang.levels.all %}
+                    {
+                        level: "{{ level.get_level_display }}",
+                        price: "₹{{ level.price|floatformat:0|default:0 }}"
+                    }{% if not forloop.last %},{% endif %}
+                    {% endfor %}
+                ]
+            }{% if not forloop.last %},{% endif %}
+            {% endfor %}
+        };
+
+        // Language name to ID mapping for backward compatibility
+        const languageNameToId = {
+            {% for lang in languages %}
+            "{{ lang.name|lower }}": {{ lang.id }}{% if not forloop.last %},{% endif %}
+            {% endfor %}
+        };
+    </script>
     <script src="{% static 'js/languages.js' %}"></script>
     <script>
+        // Override static languageData with database data
+        if (typeof databaseLanguageData !== 'undefined') {
+            // Convert databaseLanguageData to work with existing modal function
+            window.languageDataFromDB = {};
+            for (const [id, lang] of Object.entries(databaseLanguageData)) {
+                // Create key from language name (lowercase) for backward compatibility
+                const key = lang.name.toLowerCase();
+                window.languageDataFromDB[key] = lang;
+                // Also store by ID
+                window.languageDataFromDB[id] = lang;
+            }
+            
+            // Override the openModal function to use database data
+            const originalOpenModal = window.openModal;
+            if (originalOpenModal) {
+                window.openModal = function(language) {
+                    // Try to find language by ID first, then by name
+                    let data = null;
+                    if (typeof language === 'number' || /^\d+$/.test(language)) {
+                        // It's an ID
+                        data = window.languageDataFromDB[language] || databaseLanguageData[language];
+                    } else {
+                        // It's a name/key
+                        const langId = languageNameToId[language.toLowerCase()];
+                        if (langId) {
+                            data = window.languageDataFromDB[langId] || databaseLanguageData[langId];
+                        } else {
+                            data = window.languageDataFromDB[language.toLowerCase()];
+                        }
+                    }
+                    
+                    if (!data) {
+                        console.error('Language not found:', language);
+                        return;
+                    }
+
+                    // Populate modal content
+                    document.getElementById('modalFlag').textContent = data.flag;
+                    document.getElementById('modalTitle').textContent = data.name;
+                    document.getElementById('modalDescription').textContent = data.description;
+
+                    // Populate pricing levels
+                    const pricingLevelsContainer = document.getElementById('pricingLevels');
+                    pricingLevelsContainer.innerHTML = '';
+                    
+                    if (data.pricing && data.pricing.length > 0) {
+                        data.pricing.forEach(level => {
+                            const levelDiv = document.createElement('div');
+                            levelDiv.className = 'pricing-level';
+                            levelDiv.innerHTML = `
+                                <span class="level-name">${level.level}</span>
+                                <span class="level-price">${level.price} + taxes</span>
+                            `;
+                            pricingLevelsContainer.appendChild(levelDiv);
+                        });
+                    } else {
+                        pricingLevelsContainer.innerHTML = '<p style="text-align: center; color: rgba(255,255,255,0.7); padding: 20px;">No pricing information available yet.</p>';
+                    }
+
+                    // Update enroll button
+                    const enrollBtn = document.getElementById('enrollNowBtn');
+                    if (enrollBtn) {
+                        enrollBtn.dataset.language = data.name;
+                        enrollBtn.dataset.languageId = data.id;
+                    }
+
+                    // Show modal
+                    const modal = document.getElementById('pricingModal');
+                    if (modal) {
+                        modal.classList.add('active');
+                        document.body.style.overflow = 'hidden';
+                    }
+                };
+            }
+        }
+
+        // Override static JS event listeners after everything loads
+        function setupDatabaseModalHandlers() {
+            // Wait a bit for static JS to load
+            setTimeout(function() {
+                // Remove old event listeners by replacing buttons
+                document.querySelectorAll('.language-btn').forEach(btn => {
+                    // Clone button to remove old listeners
+                    const newBtn = btn.cloneNode(true);
+                    btn.parentNode.replaceChild(newBtn, btn);
+                    
+                    // Add new click handler using database data
+                    newBtn.addEventListener('click', (e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        
+                        const languageId = newBtn.getAttribute('data-language-id');
+                        const languageName = newBtn.getAttribute('data-language-name');
+                        
+                        if (languageId && window.openModal) {
+                            // Use ID to open modal with database data
+                            window.openModal(parseInt(languageId));
+                        } else if (languageName && window.openModal) {
+                            // Fallback to name
+                            window.openModal(languageName.toLowerCase());
+                        }
+                    });
+                });
+            }, 100);
+        }
+        
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', setupDatabaseModalHandlers);
+        } else {
+            setupDatabaseModalHandlers();
+        }
+
         // Profile dropdown toggle
         const profileBtn = document.getElementById('profileBtn');
         const profileDropdown = document.getElementById('profileDropdown');

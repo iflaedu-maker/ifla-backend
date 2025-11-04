@@ -13,6 +13,48 @@ from .models import (
 )
 
 
+def get_price_for_level(level_code, category):
+    """
+    Get the price for a course level based on category.
+    
+    Category 1 pricing:
+    - A1: ₹16,000
+    - A2: ₹18,000
+    - B1: ₹20,000
+    - B2: ₹22,000
+    - C1: ₹24,000
+    - C2: ₹26,000
+    
+    Category 2 pricing:
+    - A1: ₹14,000
+    - A2: ₹16,000
+    - B1: ₹18,000
+    - B2: ₹20,000
+    - C1: ₹22,000
+    - C2: ₹24,000
+    """
+    pricing = {
+        1: {  # Category 1
+            'A1': 16000,
+            'A2': 18000,
+            'B1': 20000,
+            'B2': 22000,
+            'C1': 24000,
+            'C2': 26000,
+        },
+        2: {  # Category 2
+            'A1': 14000,
+            'A2': 16000,
+            'B1': 18000,
+            'B2': 20000,
+            'C1': 22000,
+            'C2': 24000,
+        }
+    }
+    
+    return pricing.get(category, {}).get(level_code, 0)
+
+
 def is_staff(user):
     """Check if user is staff/admin"""
     return user.is_authenticated and user.is_staff
@@ -712,6 +754,7 @@ def admin_update_language(request, language_id):
     if request.method == 'POST':
         try:
             language = get_object_or_404(Language, id=language_id)
+            old_category = language.category
             name = request.POST.get('name', '').strip()
             flag_emoji = request.POST.get('flag_emoji', '').strip()
             description = request.POST.get('description', '').strip()
@@ -740,7 +783,25 @@ def admin_update_language(request, language_id):
             
             language.save()
             
-            messages.success(request, f'Language "{name}" updated successfully!')
+            # If category changed, update all course level prices
+            if old_category != category:
+                levels_updated = 0
+                for level in language.levels.all():
+                    new_price = get_price_for_level(level.level, category)
+                    if new_price > 0:
+                        level.price = new_price
+                        level.save()
+                        levels_updated += 1
+                
+                if levels_updated > 0:
+                    messages.success(
+                        request, 
+                        f'Language "{name}" updated successfully! Updated prices for {levels_updated} course level(s) based on Category {category} pricing.'
+                    )
+                else:
+                    messages.success(request, f'Language "{name}" updated successfully!')
+            else:
+                messages.success(request, f'Language "{name}" updated successfully!')
         except Exception as e:
             messages.error(request, f'Error updating language: {str(e)}')
     
@@ -769,12 +830,12 @@ def admin_add_level(request):
         try:
             language_id = request.POST.get('language_id')
             level = request.POST.get('level', '').strip()
-            price = request.POST.get('price')
+            price_input = request.POST.get('price', '').strip()
             duration_weeks = int(request.POST.get('duration_weeks', 12))
             description = request.POST.get('description', '').strip()
             
-            if not language_id or not level or not price:
-                messages.error(request, 'Language, level, and price are required')
+            if not language_id or not level:
+                messages.error(request, 'Language and level are required')
                 return redirect('admin-courses')
             
             language = get_object_or_404(Language, id=language_id)
@@ -784,6 +845,20 @@ def admin_add_level(request):
                 messages.error(request, f'Level {level} already exists for {language.name}')
                 return redirect('admin-courses')
             
+            # Determine price: use provided price or category-based pricing
+            if price_input:
+                try:
+                    price = float(price_input)
+                except ValueError:
+                    messages.error(request, 'Invalid price format')
+                    return redirect('admin-courses')
+            else:
+                # Auto-set price based on category
+                price = get_price_for_level(level, language.category)
+                if price == 0:
+                    messages.error(request, 'Price is required or could not be determined from category')
+                    return redirect('admin-courses')
+            
             CourseLevel.objects.create(
                 language=language,
                 level=level,
@@ -792,7 +867,7 @@ def admin_add_level(request):
                 description=description
             )
             
-            messages.success(request, f'Course level {level} added to {language.name}!')
+            messages.success(request, f'Course level {level} added to {language.name} with price ₹{price:,.0f}!')
         except Exception as e:
             messages.error(request, f'Error adding course level: {str(e)}')
     
