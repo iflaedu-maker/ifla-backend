@@ -741,7 +741,31 @@ def admin_add_language(request):
                 language.image_file = image_file
                 language.save()
             
-            messages.success(request, f'Language "{name}" added successfully!')
+            # Automatically create all course levels based on category
+            level_codes = ['A1', 'A2', 'B1', 'B2', 'C1', 'C2']
+            levels_created = 0
+            
+            for level_code in level_codes:
+                # Check if level already exists (shouldn't, but just in case)
+                if not CourseLevel.objects.filter(language=language, level=level_code).exists():
+                    price = get_price_for_level(level_code, category)
+                    if price > 0:
+                        CourseLevel.objects.create(
+                            language=language,
+                            level=level_code,
+                            price=price,
+                            duration_weeks=12,
+                            description=''
+                        )
+                        levels_created += 1
+            
+            if levels_created > 0:
+                messages.success(
+                    request, 
+                    f'Language "{name}" added successfully! Created {levels_created} course level(s) with Category {category} pricing.'
+                )
+            else:
+                messages.success(request, f'Language "{name}" added successfully!')
         except Exception as e:
             messages.error(request, f'Error adding language: {str(e)}')
     
