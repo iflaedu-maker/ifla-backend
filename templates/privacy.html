@@ -4,38 +4,359 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Privacy Policy</title>
+    <title>Privacy Policy - IFLA</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@100;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+    <style>
+        .policy-container {
+            max-width: 900px;
+            margin: 120px auto 60px;
+            padding: 40px;
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .policy-header {
+            margin-bottom: 40px;
+            padding-bottom: 20px;
+            border-bottom: 2px solid rgba(255, 255, 255, 0.1);
+        }
+        .policy-title {
+            font-size: 42px;
+            font-weight: 700;
+            color: #FFFFFF;
+            margin-bottom: 16px;
+            font-family: 'Montserrat', sans-serif;
+        }
+        .policy-subtitle {
+            font-size: 18px;
+            color: rgba(255, 255, 255, 0.8);
+            line-height: 1.6;
+        }
+        .policy-content {
+            color: rgba(255, 255, 255, 0.9);
+            line-height: 1.8;
+        }
+        .policy-content h2 {
+            font-size: 28px;
+            font-weight: 600;
+            color: #FFFFFF;
+            margin-top: 40px;
+            margin-bottom: 20px;
+            font-family: 'Montserrat', sans-serif;
+        }
+        .policy-content h3 {
+            font-size: 22px;
+            font-weight: 600;
+            color: #FFFFFF;
+            margin-top: 30px;
+            margin-bottom: 16px;
+        }
+        .policy-content p {
+            margin-bottom: 16px;
+            font-size: 16px;
+        }
+        .policy-content ul, .policy-content ol {
+            margin: 20px 0;
+            padding-left: 30px;
+        }
+        .policy-content li {
+            margin-bottom: 12px;
+            font-size: 16px;
+        }
+        .policy-content a {
+            color: #4A90E2;
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+        .policy-content a:hover {
+            color: #6BA3F0;
+            text-decoration: underline;
+        }
+        .last-updated {
+            font-size: 14px;
+            color: rgba(255, 255, 255, 0.6);
+            font-style: italic;
+            margin-top: 40px;
+            padding-top: 20px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        @media (max-width: 768px) {
+            .policy-container {
+                margin: 100px 20px 40px;
+                padding: 24px;
+            }
+            .policy-title {
+                font-size: 32px;
+            }
+            .policy-content h2 {
+                font-size: 24px;
+            }
+        }
+    </style>
 </head>
 <body>
-    <section class="container" style="max-width:900px;margin:40px auto;padding:20px;">
-        <h1>Privacy Policy</h1>
-        <p>Your privacy is important to us. This policy explains how we collect, use, and protect your information.</p>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-left">
+            <button class="hamburger-menu">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+            <a href="{% url 'index' %}" class="logo" style="text-decoration: none;">IFLA</a>
+        </div>
+        <div class="nav-center">
+            <div class="nav-links">
+                <a href="{% url 'index' %}" class="nav-link">Home</a>
+                <a href="{% url 'languages' %}" class="nav-link">Courses / Languages</a>
+                <a href="#" class="nav-link">About Us</a>
+                <a href="{% url 'index' %}#contact" class="nav-link">Contact</a>
+            </div>
+        </div>
+        <div class="nav-right">
+            {% if user.is_authenticated %}
+                <div class="user-profile-menu">
+                    <button class="profile-btn" id="profileBtn">
+                        <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor">
+                            <path d="M16 17v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            <circle cx="10" cy="5" r="4" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                        <span>{{ user.first_name|default:user.email|truncatewords:1 }}</span>
+                        <svg class="dropdown-arrow" width="12" height="12" viewBox="0 0 12 12" fill="none">
+                            <path d="M3 4.5L6 7.5L9 4.5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                    </button>
+                    <div class="profile-dropdown" id="profileDropdown">
+                        <a href="{% url 'dashboard' %}" class="dropdown-item">
+                            <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                                <rect x="2" y="2" width="5" height="5" stroke="currentColor" stroke-width="1.5"/>
+                                <rect x="9" y="2" width="5" height="5" stroke="currentColor" stroke-width="1.5"/>
+                                <rect x="2" y="9" width="5" height="5" stroke="currentColor" stroke-width="1.5"/>
+                                <rect x="9" y="9" width="5" height="5" stroke="currentColor" stroke-width="1.5"/>
+                            </svg>
+                            Dashboard
+                        </a>
+                        <div class="dropdown-divider"></div>
+                        <a href="{% url 'logout_redirect' %}" class="dropdown-item logout">
+                            <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                                <path d="M6 14H3a1 1 0 0 1-1-1V3a1 1 0 0 1 1-1h3M11 11l3-3-3-3M14 8H6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                            Logout
+                        </a>
+                    </div>
+                </div>
+            {% else %}
+                <a href="{% url 'auth' %}" class="nav-btn nav-btn-login">Login</a>
+                <a href="{% url 'auth' %}?action=signup" class="nav-btn nav-btn-signup">Sign Up</a>
+            {% endif %}
+        </div>
+    </nav>
 
-        <h2>Information We Collect</h2>
-        <ul>
-            <li>Account details (name, email, phone)</li>
-            <li>Learning preferences and submissions</li>
-            <li>Payment details handled by Razorpay (we do not store card data)</li>
-        </ul>
+    <!-- Policy Content -->
+    <div class="policy-container">
+        <div class="policy-header">
+            <h1 class="policy-title">Privacy Policy</h1>
+            <p class="policy-subtitle">Your privacy is important to us. This policy explains how we collect, use, and protect your information when you use IFLA's services.</p>
+        </div>
 
-        <h2>How We Use Information</h2>
-        <ul>
-            <li>To deliver and improve our services</li>
-            <li>To communicate updates and support</li>
-            <li>To comply with legal requirements</li>
-        </ul>
+        <div class="policy-content">
+            <h2>1. Information We Collect</h2>
+            <p>We collect information that you provide directly to us, including:</p>
+            <ul>
+                <li><strong>Account Information:</strong> Name, email address, phone number, date of birth, and profile photo</li>
+                <li><strong>Enrollment Information:</strong> Course preferences, learning goals, address, and verification documents</li>
+                <li><strong>Payment Information:</strong> Payment details are processed securely through Razorpay. We do not store your credit card or banking information on our servers</li>
+                <li><strong>Usage Data:</strong> Information about how you interact with our platform, including course progress, attendance, and learning activities</li>
+                <li><strong>Communication Data:</strong> Messages, inquiries, and feedback you send to us</li>
+            </ul>
 
-        <h2>Data Security</h2>
-        <p>We implement industry-standard controls and rely on secure processors like Razorpay for payments.</p>
+            <h2>2. How We Use Your Information</h2>
+            <p>We use the information we collect to:</p>
+            <ul>
+                <li>Provide, maintain, and improve our language learning services</li>
+                <li>Process your enrollments and manage your account</li>
+                <li>Send you course updates, schedule changes, and important notifications</li>
+                <li>Respond to your inquiries and provide customer support</li>
+                <li>Generate certificates and track your learning progress</li>
+                <li>Comply with legal obligations and protect our rights</li>
+                <li>Send you marketing communications (with your consent, which you can opt out of at any time)</li>
+            </ul>
 
-        <h2>Your Rights</h2>
-        <p>You may request access, correction, or deletion of your personal data by contacting us.</p>
+            <h2>3. Data Security</h2>
+            <p>We implement industry-standard security measures to protect your personal information:</p>
+            <ul>
+                <li>Encryption of data in transit using SSL/TLS protocols</li>
+                <li>Secure storage of data with access controls</li>
+                <li>Regular security assessments and updates</li>
+                <li>Payment processing through PCI-DSS compliant Razorpay</li>
+            </ul>
+            <p>However, no method of transmission over the internet or electronic storage is 100% secure. While we strive to protect your data, we cannot guarantee absolute security.</p>
 
-        <h2>Contact</h2>
-        <p>Email: <a href="mailto:privacy@ifla.in">privacy@ifla.in</a> | Phone: +91 8660846165</p>
-    </section>
+            <h2>4. Data Sharing and Disclosure</h2>
+            <p>We do not sell your personal information. We may share your information only in the following circumstances:</p>
+            <ul>
+                <li><strong>Service Providers:</strong> With trusted third-party service providers who assist us in operating our platform (e.g., payment processors, email services)</li>
+                <li><strong>Legal Requirements:</strong> When required by law, court order, or government regulation</li>
+                <li><strong>Business Transfers:</strong> In connection with a merger, acquisition, or sale of assets (with notice to users)</li>
+                <li><strong>With Your Consent:</strong> When you explicitly authorize us to share your information</li>
+            </ul>
+
+            <h2>5. Your Rights and Choices</h2>
+            <p>You have the following rights regarding your personal information:</p>
+            <ul>
+                <li><strong>Access:</strong> Request a copy of the personal information we hold about you</li>
+                <li><strong>Correction:</strong> Request correction of inaccurate or incomplete information</li>
+                <li><strong>Deletion:</strong> Request deletion of your personal information (subject to legal and contractual obligations)</li>
+                <li><strong>Data Portability:</strong> Request transfer of your data to another service provider</li>
+                <li><strong>Opt-Out:</strong> Unsubscribe from marketing communications at any time</li>
+                <li><strong>Account Closure:</strong> Request closure of your account and deletion of associated data</li>
+            </ul>
+            <p>To exercise these rights, please contact us using the information provided in the "Contact Us" section below.</p>
+
+            <h2>6. Cookies and Tracking Technologies</h2>
+            <p>We use cookies and similar tracking technologies to:</p>
+            <ul>
+                <li>Remember your preferences and settings</li>
+                <li>Analyze how you use our platform to improve our services</li>
+                <li>Provide personalized content and recommendations</li>
+            </ul>
+            <p>You can control cookies through your browser settings. However, disabling cookies may limit your ability to use certain features of our platform.</p>
+
+            <h2>7. Children's Privacy</h2>
+            <p>Our services are intended for users aged 13 and above. We do not knowingly collect personal information from children under 13. If you believe we have collected information from a child under 13, please contact us immediately.</p>
+
+            <h2>8. International Data Transfers</h2>
+            <p>Your information may be transferred to and processed in countries other than your country of residence. We ensure appropriate safeguards are in place to protect your data in accordance with this Privacy Policy.</p>
+
+            <h2>9. Data Retention</h2>
+            <p>We retain your personal information for as long as necessary to:</p>
+            <ul>
+                <li>Provide our services to you</li>
+                <li>Comply with legal obligations</li>
+                <li>Resolve disputes and enforce our agreements</li>
+            </ul>
+            <p>When you close your account, we will delete or anonymize your personal information, except where we are required to retain it for legal purposes.</p>
+
+            <h2>10. Changes to This Privacy Policy</h2>
+            <p>We may update this Privacy Policy from time to time to reflect changes in our practices or legal requirements. We will notify you of any material changes by:</p>
+            <ul>
+                <li>Posting the updated policy on this page</li>
+                <li>Updating the "Last Updated" date</li>
+                <li>Sending you an email notification (for significant changes)</li>
+            </ul>
+            <p>Your continued use of our services after such changes constitutes acceptance of the updated policy.</p>
+
+            <h2>11. Contact Us</h2>
+            <p>If you have questions, concerns, or requests regarding this Privacy Policy or our data practices, please contact us:</p>
+            <ul>
+                <li><strong>Email:</strong> <a href="mailto:privacy@ifla.in">privacy@ifla.in</a></li>
+                <li><strong>Phone:</strong> <a href="tel:+918660846165">+91 8660846165</a></li>
+                <li><strong>Address:</strong> 16, 7th Main Rd, PNS Layout, Subbayianiah Palyam, Kalyan Nagar, Bengaluru, Karnataka 560043, India</li>
+            </ul>
+
+            <div class="last-updated">
+                <p><strong>Last Updated:</strong> December 2024</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer Section -->
+    <footer class="footer">
+        <div class="footer-container">
+            <div class="footer-content">
+                <div class="footer-column footer-about">
+                    <h3 class="footer-logo">IFLA</h3>
+                    <p class="footer-description">Learn languages. Live cultures. Begin your journey today — from home, at less cost, with expert guidance.</p>
+                    <div class="footer-social">
+                        <a href="#" class="social-link" aria-label="Facebook">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+                                <path d="M18 2H15C13.6739 2 12.4021 2.52678 11.4645 3.46447C10.5268 4.40215 10 5.67392 10 7V10H7V14H10V22H14V14H17L18 10H14V7C14 6.73478 14.1054 6.48043 14.2929 6.29289C14.4804 6.10536 14.7348 6 15 6H18V2Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                        </a>
+                        <a href="#" class="social-link" aria-label="Twitter">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+                                <path d="M23 3A10.9 10.9 0 0 1 20.18 5.22A4.45 4.45 0 0 0 22.46 2A9 9 0 0 1 19.83 2.72A4.5 4.5 0 0 0 16.73 1A4.52 4.52 0 0 0 12.25 5.5A12.82 12.82 0 0 1 1.64 2.18A4.54 4.54 0 0 0 3 7.17A4.53 4.53 0 0 1 1.18 6.45A4.5 4.5 0 0 0 4.64 9.77A4.49 4.49 0 0 1 1 10.73A4.51 4.51 0 0 0 4.64 13.5A9.05 9.05 0 0 1 1 19.73A12.74 12.74 0 0 0 8.64 23A13 13 0 0 0 23 4.68Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                        </a>
+                        <a href="#" class="social-link" aria-label="Instagram">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+                                <rect x="2" y="2" width="20" height="20" rx="5" ry="5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                <line x1="17.5" y1="6.5" x2="17.51" y2="6.5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                        </a>
+                        <a href="#" class="social-link" aria-label="LinkedIn">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+                                <path d="M16 8A6 6 0 0 1 22 14V21H18V14A2 2 0 0 0 14 12C13.4696 12 12.9609 12.2107 12.5858 12.5858C12.2107 12.9609 12 13.4696 12 14V21H8V8H12V9.5C12.5889 8.66131 13.4872 8.03298 14.5307 7.72736C15.5741 7.42174 16.7056 7.45619 17.7282 7.82434C18.7508 8.19249 19.6093 8.87563 20.1635 9.76473C20.7177 10.6538 20.9372 11.6948 20.7895 12.7127V21H16.7895V14A2 2 0 0 0 14.7895 12C14.2591 12 13.7504 12.2107 13.3753 12.5858C13.0002 12.9609 12.7895 13.4696 12.7895 14V21H8.78949V8H12.7895Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                <circle cx="4" cy="8" r="2" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                        </a>
+                    </div>
+                </div>
+                
+                <div class="footer-column">
+                    <h4 class="footer-heading">Quick Links</h4>
+                    <ul class="footer-links">
+                        <li><a href="{% url 'index' %}" class="footer-link">Home</a></li>
+                        <li><a href="{% url 'languages' %}" class="footer-link">Courses / Languages</a></li>
+                        <li><a href="#" class="footer-link">About Us</a></li>
+                        <li><a href="{% url 'index' %}#contact" class="footer-link">Contact</a></li>
+                    </ul>
+                </div>
+                
+                <div class="footer-column">
+                    <h4 class="footer-heading">Resources</h4>
+                    <ul class="footer-links">
+                        <li><a href="#" class="footer-link">Blog</a></li>
+                        <li><a href="#" class="footer-link">FAQ</a></li>
+                        <li><a href="#" class="footer-link">Support</a></li>
+                        <li><a href="#" class="footer-link">Pricing</a></li>
+                    </ul>
+                </div>
+                
+                <div class="footer-column">
+                    <h4 class="footer-heading">Legal</h4>
+                    <ul class="footer-links">
+                        <li><a href="{% url 'privacy' %}" class="footer-link">Privacy Policy</a></li>
+                        <li><a href="{% url 'terms' %}" class="footer-link">Terms & Conditions</a></li>
+                        <li><a href="{% url 'refunds' %}" class="footer-link">Refund & Cancellation</a></li>
+                        <li><a href="{% url 'shipping' %}" class="footer-link">Shipping & Delivery</a></li>
+                        <li><a href="{% url 'contact-policy' %}" class="footer-link">Contact Us</a></li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="footer-bottom">
+                <p class="footer-copyright">© 2024 IFLA. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    {% csrf_token %}
+    <script src="{% static 'js/script.js' %}"></script>
+    <script>
+        // Profile dropdown toggle
+        const profileBtn = document.getElementById('profileBtn');
+        const profileDropdown = document.getElementById('profileDropdown');
+        
+        if (profileBtn && profileDropdown) {
+            profileBtn.addEventListener('click', function(e) {
+                e.stopPropagation();
+                profileBtn.classList.toggle('active');
+                profileDropdown.classList.toggle('active');
+            });
+            
+            document.addEventListener('click', function(e) {
+                if (!profileBtn.contains(e.target) && !profileDropdown.contains(e.target)) {
+                    profileBtn.classList.remove('active');
+                    profileDropdown.classList.remove('active');
+                }
+            });
+        }
+    </script>
 </body>
 </html>
-
-

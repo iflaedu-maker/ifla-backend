@@ -4,36 +4,353 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Refund & Cancellation Policy</title>
+    <title>Refund & Cancellation Policy - IFLA</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@100;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+    <style>
+        .policy-container {
+            max-width: 900px;
+            margin: 120px auto 60px;
+            padding: 40px;
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .policy-header {
+            margin-bottom: 40px;
+            padding-bottom: 20px;
+            border-bottom: 2px solid rgba(255, 255, 255, 0.1);
+        }
+        .policy-title {
+            font-size: 42px;
+            font-weight: 700;
+            color: #FFFFFF;
+            margin-bottom: 16px;
+            font-family: 'Montserrat', sans-serif;
+        }
+        .policy-subtitle {
+            font-size: 18px;
+            color: rgba(255, 255, 255, 0.8);
+            line-height: 1.6;
+        }
+        .policy-content {
+            color: rgba(255, 255, 255, 0.9);
+            line-height: 1.8;
+        }
+        .policy-content h2 {
+            font-size: 28px;
+            font-weight: 600;
+            color: #FFFFFF;
+            margin-top: 40px;
+            margin-bottom: 20px;
+            font-family: 'Montserrat', sans-serif;
+        }
+        .policy-content h3 {
+            font-size: 22px;
+            font-weight: 600;
+            color: #FFFFFF;
+            margin-top: 30px;
+            margin-bottom: 16px;
+        }
+        .policy-content p {
+            margin-bottom: 16px;
+            font-size: 16px;
+        }
+        .policy-content ul, .policy-content ol {
+            margin: 20px 0;
+            padding-left: 30px;
+        }
+        .policy-content li {
+            margin-bottom: 12px;
+            font-size: 16px;
+        }
+        .policy-content a {
+            color: #4A90E2;
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+        .policy-content a:hover {
+            color: #6BA3F0;
+            text-decoration: underline;
+        }
+        .no-refund-notice {
+            background: rgba(220, 53, 69, 0.2);
+            border-left: 4px solid #DC3545;
+            padding: 20px;
+            margin: 30px 0;
+            border-radius: 8px;
+        }
+        .no-refund-notice p {
+            color: #FFFFFF;
+            font-weight: 600;
+            font-size: 18px;
+            margin: 0;
+        }
+        .last-updated {
+            font-size: 14px;
+            color: rgba(255, 255, 255, 0.6);
+            font-style: italic;
+            margin-top: 40px;
+            padding-top: 20px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        @media (max-width: 768px) {
+            .policy-container {
+                margin: 100px 20px 40px;
+                padding: 24px;
+            }
+            .policy-title {
+                font-size: 32px;
+            }
+            .policy-content h2 {
+                font-size: 24px;
+            }
+        }
+    </style>
 </head>
 <body>
-    <section class="container" style="max-width:900px;margin:40px auto;padding:20px;">
-        <h1>Refund & Cancellation Policy</h1>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-left">
+            <button class="hamburger-menu">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+            <a href="{% url 'index' %}" class="logo" style="text-decoration: none;">IFLA</a>
+        </div>
+        <div class="nav-center">
+            <div class="nav-links">
+                <a href="{% url 'index' %}" class="nav-link">Home</a>
+                <a href="{% url 'languages' %}" class="nav-link">Courses / Languages</a>
+                <a href="#" class="nav-link">About Us</a>
+                <a href="{% url 'index' %}#contact" class="nav-link">Contact</a>
+            </div>
+        </div>
+        <div class="nav-right">
+            {% if user.is_authenticated %}
+                <div class="user-profile-menu">
+                    <button class="profile-btn" id="profileBtn">
+                        <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor">
+                            <path d="M16 17v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            <circle cx="10" cy="5" r="4" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                        <span>{{ user.first_name|default:user.email|truncatewords:1 }}</span>
+                        <svg class="dropdown-arrow" width="12" height="12" viewBox="0 0 12 12" fill="none">
+                            <path d="M3 4.5L6 7.5L9 4.5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                    </button>
+                    <div class="profile-dropdown" id="profileDropdown">
+                        <a href="{% url 'dashboard' %}" class="dropdown-item">
+                            <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                                <rect x="2" y="2" width="5" height="5" stroke="currentColor" stroke-width="1.5"/>
+                                <rect x="9" y="2" width="5" height="5" stroke="currentColor" stroke-width="1.5"/>
+                                <rect x="2" y="9" width="5" height="5" stroke="currentColor" stroke-width="1.5"/>
+                                <rect x="9" y="9" width="5" height="5" stroke="currentColor" stroke-width="1.5"/>
+                            </svg>
+                            Dashboard
+                        </a>
+                        <div class="dropdown-divider"></div>
+                        <a href="{% url 'logout_redirect' %}" class="dropdown-item logout">
+                            <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                                <path d="M6 14H3a1 1 0 0 1-1-1V3a1 1 0 0 1 1-1h3M11 11l3-3-3-3M14 8H6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                            Logout
+                        </a>
+                    </div>
+                </div>
+            {% else %}
+                <a href="{% url 'auth' %}" class="nav-btn nav-btn-login">Login</a>
+                <a href="{% url 'auth' %}?action=signup" class="nav-btn nav-btn-signup">Sign Up</a>
+            {% endif %}
+        </div>
+    </nav>
 
-        <h2>Cancellations</h2>
-        <p>You may request cancellation within 7 days of purchase if the course has not started. Once a class has commenced, cancellations are not permitted.</p>
+    <!-- Policy Content -->
+    <div class="policy-container">
+        <div class="policy-header">
+            <h1 class="policy-title">Refund & Cancellation Policy</h1>
+            <p class="policy-subtitle">Please read this policy carefully before enrolling in any course. All payments are final and non-refundable.</p>
+        </div>
 
-        <h2>Refund Eligibility</h2>
-        <ul>
-            <li>100% refund if cancelled within 7 days and before course start.</li>
-            <li>No refund once the course has started or materials have been accessed.</li>
-            <li>Fees for third-party services (e.g., exam fees) are non-refundable.</li>
-        </ul>
+        <div class="policy-content">
+            <div class="no-refund-notice">
+                <p>⚠️ IMPORTANT: All course fees are non-refundable. Once payment is made, no refunds will be issued under any circumstances.</p>
+            </div>
 
-        <h2>Refund Timelines</h2>
-        <ul>
-            <li>UPI/Wallets: 2–4 business days</li>
-            <li>Netbanking: 3–5 business days</li>
-            <li>Cards (Credit/Debit): 5–7 business days</li>
-            <li>International cards: 7–10 business days</li>
-        </ul>
-        <p>Refunds are processed to the original payment method via Razorpay.</p>
+            <h2>1. No Refund Policy</h2>
+            <p>IFLA operates under a strict no-refund policy. All course fees, enrollment charges, and related payments are final and non-refundable once the payment transaction is completed. This policy applies to:</p>
+            <ul>
+                <li>Course enrollment fees</li>
+                <li>Tuition payments</li>
+                <li>Registration fees</li>
+                <li>Material fees</li>
+                <li>Certification fees</li>
+                <li>Any other charges associated with course enrollment</li>
+            </ul>
 
-        <h2>How to Request</h2>
-        <p>Email <a href="mailto:billing@ifla.in">billing@ifla.in</a> with your order ID and reason. Our team will review within 2 business days.</p>
-    </section>
+            <h2>2. Cancellation Policy</h2>
+            <p>While you may cancel your enrollment at any time, cancellation does not entitle you to a refund. Upon cancellation:</p>
+            <ul>
+                <li>Your access to course materials and classes will be immediately revoked</li>
+                <li>No refund will be issued for any unused portion of the course</li>
+                <li>You will not be eligible for future course credits or transfers</li>
+                <li>Any pending payments must still be completed as per the payment schedule</li>
+            </ul>
+
+            <h2>3. Exceptions</h2>
+            <p><strong>There are NO exceptions to this policy.</strong> This includes, but is not limited to:</p>
+            <ul>
+                <li>Technical difficulties or platform issues</li>
+                <li>Personal circumstances or emergencies</li>
+                <li>Dissatisfaction with course content or teaching methods</li>
+                <li>Inability to attend scheduled classes</li>
+                <li>Change of mind or decision to discontinue</li>
+                <li>Medical emergencies or health issues</li>
+                <li>Relocation or travel</li>
+                <li>Work or personal commitments</li>
+                <li>Course cancellation by IFLA (in which case, alternative arrangements will be made, but no refunds will be issued)</li>
+            </ul>
+
+            <h2>4. Payment Processing</h2>
+            <p>All payments are processed securely through Razorpay. Once a payment is successfully processed:</p>
+            <ul>
+                <li>The transaction is considered final and binding</li>
+                <li>No refund requests will be entertained</li>
+                <li>No chargebacks or payment reversals are permitted</li>
+            </ul>
+
+            <h2>5. Course Transfers</h2>
+            <p>Course transfers to other students or future sessions are not permitted. Each enrollment is personal and non-transferable.</p>
+
+            <h2>6. Dispute Resolution</h2>
+            <p>If you have concerns about your enrollment or payment, please contact us at <a href="mailto:billing@ifla.in">billing@ifla.in</a>. However, please note that:</p>
+            <ul>
+                <li>Contacting us does not guarantee any refund or resolution</li>
+                <li>All decisions regarding payments are final</li>
+                <li>By making a payment, you acknowledge and agree to this no-refund policy</li>
+            </ul>
+
+            <h2>7. Acknowledgment</h2>
+            <p>By completing the payment and enrolling in any IFLA course, you acknowledge that:</p>
+            <ul>
+                <li>You have read, understood, and agree to this Refund & Cancellation Policy</li>
+                <li>You understand that all payments are final and non-refundable</li>
+                <li>You accept full responsibility for your enrollment decision</li>
+                <li>You will not request refunds or chargebacks under any circumstances</li>
+            </ul>
+
+            <h2>8. Contact Information</h2>
+            <p>For any questions or concerns regarding this policy, please contact us:</p>
+            <ul>
+                <li><strong>Email:</strong> <a href="mailto:billing@ifla.in">billing@ifla.in</a></li>
+                <li><strong>Phone:</strong> <a href="tel:+918660846165">+91 8660846165</a></li>
+                <li><strong>Address:</strong> 16, 7th Main Rd, PNS Layout, Subbayianiah Palyam, Kalyan Nagar, Bengaluru, Karnataka 560043, India</li>
+            </ul>
+
+            <div class="last-updated">
+                <p><strong>Last Updated:</strong> December 2024</p>
+                <p><strong>Policy Effective Date:</strong> All enrollments made on or after the publication date of this policy are subject to these terms.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer Section -->
+    <footer class="footer">
+        <div class="footer-container">
+            <div class="footer-content">
+                <div class="footer-column footer-about">
+                    <h3 class="footer-logo">IFLA</h3>
+                    <p class="footer-description">Learn languages. Live cultures. Begin your journey today — from home, at less cost, with expert guidance.</p>
+                    <div class="footer-social">
+                        <a href="#" class="social-link" aria-label="Facebook">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+                                <path d="M18 2H15C13.6739 2 12.4021 2.52678 11.4645 3.46447C10.5268 4.40215 10 5.67392 10 7V10H7V14H10V22H14V14H17L18 10H14V7C14 6.73478 14.1054 6.48043 14.2929 6.29289C14.4804 6.10536 14.7348 6 15 6H18V2Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                        </a>
+                        <a href="#" class="social-link" aria-label="Twitter">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+                                <path d="M23 3A10.9 10.9 0 0 1 20.18 5.22A4.45 4.45 0 0 0 22.46 2A9 9 0 0 1 19.83 2.72A4.5 4.5 0 0 0 16.73 1A4.52 4.52 0 0 0 12.25 5.5A12.82 12.82 0 0 1 1.64 2.18A4.54 4.54 0 0 0 3 7.17A4.53 4.53 0 0 1 1.18 6.45A4.5 4.5 0 0 0 4.64 9.77A4.49 4.49 0 0 1 1 10.73A4.51 4.51 0 0 0 4.64 13.5A9.05 9.05 0 0 1 1 19.73A12.74 12.74 0 0 0 8.64 23A13 13 0 0 0 23 4.68Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                        </a>
+                        <a href="#" class="social-link" aria-label="Instagram">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+                                <rect x="2" y="2" width="20" height="20" rx="5" ry="5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                <line x1="17.5" y1="6.5" x2="17.51" y2="6.5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                        </a>
+                        <a href="#" class="social-link" aria-label="LinkedIn">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+                                <path d="M16 8A6 6 0 0 1 22 14V21H18V14A2 2 0 0 0 14 12C13.4696 12 12.9609 12.2107 12.5858 12.5858C12.2107 12.9609 12 13.4696 12 14V21H8V8H12V9.5C12.5889 8.66131 13.4872 8.03298 14.5307 7.72736C15.5741 7.42174 16.7056 7.45619 17.7282 7.82434C18.7508 8.19249 19.6093 8.87563 20.1635 9.76473C20.7177 10.6538 20.9372 11.6948 20.7895 12.7127V21H16.7895V14A2 2 0 0 0 14.7895 12C14.2591 12 13.7504 12.2107 13.3753 12.5858C13.0002 12.9609 12.7895 13.4696 12.7895 14V21H8.78949V8H12.7895Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                <circle cx="4" cy="8" r="2" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                        </a>
+                    </div>
+                </div>
+                
+                <div class="footer-column">
+                    <h4 class="footer-heading">Quick Links</h4>
+                    <ul class="footer-links">
+                        <li><a href="{% url 'index' %}" class="footer-link">Home</a></li>
+                        <li><a href="{% url 'languages' %}" class="footer-link">Courses / Languages</a></li>
+                        <li><a href="#" class="footer-link">About Us</a></li>
+                        <li><a href="{% url 'index' %}#contact" class="footer-link">Contact</a></li>
+                    </ul>
+                </div>
+                
+                <div class="footer-column">
+                    <h4 class="footer-heading">Resources</h4>
+                    <ul class="footer-links">
+                        <li><a href="#" class="footer-link">Blog</a></li>
+                        <li><a href="#" class="footer-link">FAQ</a></li>
+                        <li><a href="#" class="footer-link">Support</a></li>
+                        <li><a href="#" class="footer-link">Pricing</a></li>
+                    </ul>
+                </div>
+                
+                <div class="footer-column">
+                    <h4 class="footer-heading">Legal</h4>
+                    <ul class="footer-links">
+                        <li><a href="{% url 'privacy' %}" class="footer-link">Privacy Policy</a></li>
+                        <li><a href="{% url 'terms' %}" class="footer-link">Terms & Conditions</a></li>
+                        <li><a href="{% url 'refunds' %}" class="footer-link">Refund & Cancellation</a></li>
+                        <li><a href="{% url 'shipping' %}" class="footer-link">Shipping & Delivery</a></li>
+                        <li><a href="{% url 'contact-policy' %}" class="footer-link">Contact Us</a></li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="footer-bottom">
+                <p class="footer-copyright">© 2024 IFLA. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    {% csrf_token %}
+    <script src="{% static 'js/script.js' %}"></script>
+    <script>
+        // Profile dropdown toggle
+        const profileBtn = document.getElementById('profileBtn');
+        const profileDropdown = document.getElementById('profileDropdown');
+        
+        if (profileBtn && profileDropdown) {
+            profileBtn.addEventListener('click', function(e) {
+                e.stopPropagation();
+                profileBtn.classList.toggle('active');
+                profileDropdown.classList.toggle('active');
+            });
+            
+            document.addEventListener('click', function(e) {
+                if (!profileBtn.contains(e.target) && !profileDropdown.contains(e.target)) {
+                    profileBtn.classList.remove('active');
+                    profileDropdown.classList.remove('active');
+                }
+            });
+        }
+    </script>
 </body>
 </html>
-
-
