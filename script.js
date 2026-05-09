@@ -300,7 +300,7 @@ function displayDemoReviews() {
     const demoReviews = [
         {
             author_name: 'Sarah Johnson',
-            text: 'IFLA has completely transformed my language learning experience! The interactive lessons and personalized approach made learning Japanese enjoyable and effective. Highly recommend!',
+            text: 'KLAS has completely transformed my language learning experience! The interactive lessons and personalized approach made learning Japanese enjoyable and effective. Highly recommend!',
             time: Date.now() / 1000 - 86400 * 30
         },
         {
@@ -310,7 +310,7 @@ function displayDemoReviews() {
         },
         {
             author_name: 'Emma Rodriguez',
-            text: 'Excellent program! The cultural immersion aspects really set IFLA apart. I not only learned the language but also gained deep insights into the culture.',
+            text: 'Excellent program! The cultural immersion aspects really set KLAS apart. I not only learned the language but also gained deep insights into the culture.',
             time: Date.now() / 1000 - 86400 * 60
         },
         {
@@ -320,7 +320,7 @@ function displayDemoReviews() {
         },
         {
             author_name: 'Lisa Thompson',
-            text: 'IFLA exceeded all my expectations! The interactive platform, supportive community, and knowledgeable instructors created the perfect learning environment.',
+            text: 'KLAS exceeded all my expectations! The interactive platform, supportive community, and knowledgeable instructors created the perfect learning environment.',
             time: Date.now() / 1000 - 86400 * 20
         },
         {

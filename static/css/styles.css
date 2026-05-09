@@ -2740,7 +2740,7 @@ select:focus {
 }
 
 .loading-logo::after {
-    content: 'IFLA';
+    content: 'KLAS';
     position: absolute;
     top: 0;
     left: 0;
